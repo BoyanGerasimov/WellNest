@@ -1,0 +1,32 @@
+{
+  "name": "wellnest-backend",
+  "version": "1.0.0",
+  "description": "Backend API for WellNest fitness tracking application",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "dotenv": "^16.3.1",
+    "@prisma/client": "^5.7.1",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "prisma": "^5.7.1"
+  },
+  "keywords": ["fitness", "nutrition", "tracking", "api"],
+  "author": "",
+  "license": "MIT"
+}
+
