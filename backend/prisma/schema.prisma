@@ -1,6 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
+// This is your Prisma schema file
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,15 +9,156 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// Placeholder model for Phase 0 setup
-// Full models will be added in Phase 1
+// User Model
 model User {
+  id                String    @id @default(uuid())
+  name              String
+  email             String    @unique
+  password          String?   // Nullable for OAuth users
+  avatar            String?
+  dateOfBirth       DateTime?
+  gender            String?   // male, female, other
+  height            Float?    // in cm
+  currentWeight     Float?    // in kg
+  goalWeight        Float?    // in kg
+  activityLevel     String?   // sedentary, lightly_active, moderately_active, very_active, extremely_active
+  dailyCalorieGoal  Int?
+  role              String    @default("user") // user, admin
+  isEmailVerified   Boolean   @default(false)
+  lastLogin         DateTime?
+  
+  // OAuth fields
+  oauthProvider     String?   // google, github
+  oauthId           String?
+  
+  // Relations
+  workouts          Workout[]
+  meals             Meal[]
+  achievements      Achievement[]
+  forumPosts        ForumPost[]
+  forumComments     ForumComment[]
+  forumLikes        ForumLike[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([email])
+  @@map("users")
+}
+
+// Workout Model
+model Workout {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  date          DateTime  @default(now())
+  exercises     Json      // Array of exercise objects
+  totalDuration Int       @default(0) // in minutes
+  caloriesBurned Int     @default(0)
+  notes         String?
+  tags          String[] @default([])
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId, date(sort: Desc)])
+  @@map("workouts")
+}
+
+// Meal Model
+model Meal {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  type          String    // breakfast, lunch, dinner, snack
+  date          DateTime  @default(now())
+  foodItems     Json      // Array of food item objects
+  totalCalories Float     @default(0)
+  totalProtein  Float     @default(0)
+  totalCarbs    Float     @default(0)
+  totalFats     Float     @default(0)
+  notes         String?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId, date(sort: Desc)])
+  @@map("meals")
+}
+
+// Achievement Model
+model Achievement {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        String   // workout_streak, calorie_goal, weight_loss, workout_count, milestone
+  title       String
+  description String
+  icon        String   @default("🏆")
+  points      Int      @default(0)
+  unlockedAt DateTime @default(now())
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId, unlockedAt(sort: Desc)])
+  @@map("achievements")
+}
+
+// Forum Post Model
+model ForumPost {
+  id        String         @id @default(uuid())
+  userId    String
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  content   String
+  category  String         // workout, nutrition, motivation, questions, general
+  tags      String[]       @default([])
+  views     Int            @default(0)
+  isPinned  Boolean        @default(false)
+  comments  ForumComment[]
+  likes     ForumLike[]
+  
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@index([category, createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("forum_posts")
+}
+
+// Forum Comment Model
+model ForumComment {
   id        String   @id @default(uuid())
-  email     String   @unique
-  name      String
+  postId    String
+  post      ForumPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   String
+  likes     ForumLike[]
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("users")
+  @@index([postId, createdAt(sort: Asc)])
+  @@map("forum_comments")
+}
+
+// Forum Like Model (for both posts and comments)
+model ForumLike {
+  id        String       @id @default(uuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId    String?
+  post      ForumPost?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  commentId String?
+  comment   ForumComment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime     @default(now())
+
+  @@unique([userId, postId, commentId])
+  @@map("forum_likes")
 }
 
