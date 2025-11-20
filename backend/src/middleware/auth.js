@@ -1,6 +1,16 @@
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+
+// Use a single PrismaClient instance (lazy initialization)
+let prisma;
+try {
+  prisma = new PrismaClient({
+    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+  });
+} catch (error) {
+  console.error('❌ Error creating PrismaClient in auth middleware:', error.message);
+  throw error;
+}
 
 // Protect routes - require authentication
 exports.protect = async (req, res, next) => {

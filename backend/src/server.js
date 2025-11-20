@@ -1,3 +1,4 @@
+console.log('📦 Loading dependencies...');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -5,12 +6,29 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
+// Validate required environment variables
+if (!process.env.DATABASE_URL) {
+  console.error('❌ DATABASE_URL is not set in environment variables');
+  console.error('   Please create a .env file with DATABASE_URL');
+  process.exit(1);
+}
+
+if (!process.env.JWT_SECRET) {
+  console.warn('⚠️  JWT_SECRET is not set. Using default (NOT SECURE FOR PRODUCTION)');
+  process.env.JWT_SECRET = 'default-jwt-secret-change-in-production';
+}
+
+console.log('✅ Dependencies loaded');
+
+console.log('📦 Initializing Prisma...');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+console.log('✅ Prisma initialized');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+console.log('✅ Express app created');
 
 let allowedFrontendOrigin;
 try {
@@ -23,37 +41,51 @@ try {
 const skipOriginCheckPaths = new Set([
   '/health',
   '/api/test-db',
-  '/api/auth/oauth/google/callback',
-  '/api/auth/oauth/github/callback'
+  '/api/auth/oauth/google/callback'
 ]);
 
 // Security middleware
+console.log('📦 Setting up middleware...');
 app.use(helmet());
+console.log('✅ Helmet configured');
 
 // CORS configuration
 app.use(cors({
   origin: allowedFrontendOrigin,
   credentials: true
 }));
+console.log('✅ CORS configured');
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+console.log('✅ Body parsers configured');
 
 // Cookie parser
 app.use(cookieParser());
+console.log('✅ Cookie parser configured');
 
 // Logging middleware
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
+  console.log('✅ Morgan logging configured');
 }
 
 // Passport initialization
+console.log('📦 Initializing Passport...');
 const passport = require('passport');
-require('./config/passport');
-app.use(passport.initialize());
+try {
+  require('./config/passport');
+  app.use(passport.initialize());
+  console.log('✅ Passport initialized');
+} catch (error) {
+  console.error('❌ Error initializing Passport:', error.message);
+  console.error(error.stack);
+  // Continue without OAuth if it fails
+}
 
 // Enforce frontend origin for API routes
+console.log('📦 Setting up origin validation middleware...');
 app.use((req, res, next) => {
   if (skipOriginCheckPaths.has(req.path)) {
     return next();
@@ -84,8 +116,10 @@ app.use((req, res, next) => {
 
   return next();
 });
+console.log('✅ Origin validation middleware configured');
 
 // Health check route
+console.log('📦 Setting up routes...');
 app.get('/health', (req, res) => {
   res.status(200).json({ 
     status: 'OK', 
@@ -112,11 +146,41 @@ app.get('/api/test-db', async (req, res) => {
     });
   }
 });
+console.log('✅ Health check and test routes configured');
 
 // API routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/auth/oauth', require('./routes/oauth'));
-app.use('/api/users', require('./routes/users'));
+console.log('📦 Loading API routes...');
+console.log('  → About to require auth routes...');
+try {
+  const authRoutes = require('./routes/auth');
+  console.log('  → Auth routes module loaded, registering...');
+  app.use('/api/auth', authRoutes);
+  console.log('✅ Auth routes loaded');
+} catch (error) {
+  console.error('❌ Error loading auth routes:', error.message);
+  console.error('Stack:', error.stack);
+  throw error;
+}
+
+try {
+  console.log('  → Loading OAuth routes...');
+  app.use('/api/auth/oauth', require('./routes/oauth'));
+  console.log('✅ OAuth routes loaded');
+} catch (error) {
+  console.error('❌ Error loading OAuth routes:', error.message);
+  console.error('Stack:', error.stack);
+  throw error;
+}
+
+try {
+  console.log('  → Loading user routes...');
+  app.use('/api/users', require('./routes/users'));
+  console.log('✅ User routes loaded');
+} catch (error) {
+  console.error('❌ Error loading user routes:', error.message);
+  console.error('Stack:', error.stack);
+  throw error;
+}
 
 // 404 handler
 app.use((req, res) => {
@@ -127,23 +191,51 @@ app.use((req, res) => {
 });
 
 // Error handling middleware
+console.log('📦 Loading error handler...');
 const errorHandler = require('./middleware/errorHandler');
 app.use(errorHandler);
+console.log('✅ Error handler loaded');
 
 // Start server
+console.log(`🚀 Starting server on port ${PORT}...`);
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Server listening on port ${PORT}`);
   console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 API: http://localhost:${PORT}/api`);
+  console.log(`✅ WellNest backend is ready!`);
+}).on('error', (error) => {
+  if (error.code === 'EADDRINUSE') {
+    console.error(`❌ Port ${PORT} is already in use. Please use a different port.`);
+  } else {
+    console.error('❌ Error starting server:', error.message);
+  }
+  process.exit(1);
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  console.error('❌ Unhandled Promise Rejection:', err);
+  // Don't exit in development, but log the error
+  if (process.env.NODE_ENV === 'production') {
+    process.exit(1);
+  }
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error('❌ Uncaught Exception:', err);
+  process.exit(1);
 });
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
+  console.log('\n🛑 Shutting down gracefully...');
   await prisma.$disconnect();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
+  console.log('\n🛑 Shutting down gracefully...');
   await prisma.$disconnect();
   process.exit(0);
 });

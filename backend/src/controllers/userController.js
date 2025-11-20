@@ -1,7 +1,17 @@
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 const { validationResult } = require('express-validator');
-const prisma = new PrismaClient();
+
+// Use a single PrismaClient instance (lazy initialization)
+let prisma;
+try {
+  prisma = new PrismaClient({
+    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+  });
+} catch (error) {
+  console.error('❌ Error creating PrismaClient in userController:', error.message);
+  throw error;
+}
 
 // @desc    Get user profile
 // @route   GET /api/users/profile

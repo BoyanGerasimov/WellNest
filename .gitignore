@@ -44,5 +44,5 @@ coverage/
 *.temp
 
 .cursor/
-phase-*.md
+docs/
 implementation-plan.md

@@ -3,7 +3,16 @@ const { PrismaClient } = require('@prisma/client');
 const { generateToken } = require('../utils/generateToken');
 const { validationResult } = require('express-validator');
 
-const prisma = new PrismaClient();
+// Use a single PrismaClient instance (lazy initialization)
+let prisma;
+try {
+  prisma = new PrismaClient({
+    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+  });
+} catch (error) {
+  console.error('❌ Error creating PrismaClient in authController:', error.message);
+  throw error;
+}
 
 // @desc    Register user
 // @route   POST /api/auth/register
