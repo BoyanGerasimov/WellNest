@@ -74,8 +74,10 @@ if (process.env.NODE_ENV === 'development') {
 // Passport initialization
 console.log('📦 Initializing Passport...');
 const passport = require('passport');
+console.log('📦 Passport module loaded, requiring config...');
 try {
   require('./config/passport');
+  console.log('📦 Passport config loaded, initializing middleware...');
   app.use(passport.initialize());
   console.log('✅ Passport initialized');
 } catch (error) {

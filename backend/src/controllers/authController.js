@@ -1,18 +1,27 @@
+console.log('       → Loading bcrypt...');
 const bcrypt = require('bcryptjs');
+console.log('       → Loading Prisma...');
 const { PrismaClient } = require('@prisma/client');
+console.log('       → Loading generateToken...');
 const { generateToken } = require('../utils/generateToken');
+console.log('       → Loading express-validator...');
 const { validationResult } = require('express-validator');
+console.log('       → express-validator loaded');
+console.log('       → All imports complete, creating PrismaClient...');
 
 // Use a single PrismaClient instance (lazy initialization)
 let prisma;
+console.log('       → Creating PrismaClient instance...');
 try {
   prisma = new PrismaClient({
     log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
   });
+  console.log('       → PrismaClient created successfully');
 } catch (error) {
   console.error('❌ Error creating PrismaClient in authController:', error.message);
   throw error;
 }
+console.log('       → authController module fully loaded');
 
 // @desc    Register user
 // @route   POST /api/auth/register

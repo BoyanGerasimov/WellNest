@@ -32,6 +32,10 @@ build/
 out/
 *.tsbuildinfo
 
+# Vite
+*.timestamp-*.mjs
+.vite/
+
 # Prisma
 backend/prisma/migrations/
 
