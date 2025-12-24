@@ -184,6 +184,26 @@ try {
   throw error;
 }
 
+try {
+  console.log('  → Loading workout routes...');
+  app.use('/api/workouts', require('./routes/workouts'));
+  console.log('✅ Workout routes loaded');
+} catch (error) {
+  console.error('❌ Error loading workout routes:', error.message);
+  console.error('Stack:', error.stack);
+  throw error;
+}
+
+try {
+  console.log('  → Loading meal routes...');
+  app.use('/api/meals', require('./routes/meals'));
+  console.log('✅ Meal routes loaded');
+} catch (error) {
+  console.error('❌ Error loading meal routes:', error.message);
+  console.error('Stack:', error.stack);
+  throw error;
+}
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ 

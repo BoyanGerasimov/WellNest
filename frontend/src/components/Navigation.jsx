@@ -31,6 +31,18 @@ const Navigation = () => {
                 Dashboard
               </Link>
               <Link
+                to="/workouts"
+                className="text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+              >
+                Workouts
+              </Link>
+              <Link
+                to="/meals"
+                className="text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+              >
+                Meals
+              </Link>
+              <Link
                 to="/profile"
                 className="text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
               >

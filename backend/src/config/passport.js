@@ -5,17 +5,17 @@ console.log('   → Passport module loaded');
 // Google OAuth Strategy (only if credentials are provided)
 try {
   if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
-    const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
     const callbackURL = process.env.GOOGLE_CALLBACK_URL || 
       `${process.env.BACKEND_URL || 'http://localhost:5001'}/api/auth/oauth/google/callback`;
-    
-    passport.use(new GoogleStrategy({
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: callbackURL
-    }, (accessToken, refreshToken, profile, done) => {
-      return done(null, profile);
-    }));
+}, (accessToken, refreshToken, profile, done) => {
+  return done(null, profile);
+}));
     console.log('✅ Google OAuth configured');
     console.log(`   Callback URL: ${callbackURL}`);
   } else {

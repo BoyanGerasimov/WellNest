@@ -96,3 +96,94 @@ exports.validateUpdatePassword = [
     .withMessage('New password must be at least 6 characters')
 ];
 
+// Meal validation
+exports.validateMeal = [
+  body('name')
+    .optional()
+    .trim()
+    .isLength({ max: 200 })
+    .withMessage('Meal name cannot exceed 200 characters'),
+  
+  body('type')
+    .optional()
+    .isIn(['breakfast', 'lunch', 'dinner', 'snack'])
+    .withMessage('Meal type must be breakfast, lunch, dinner, or snack'),
+  
+  body('date')
+    .optional()
+    .isISO8601()
+    .withMessage('Please provide a valid date'),
+  
+  body('foodItems')
+    .optional()
+    .isArray()
+    .withMessage('Food items must be an array'),
+  
+  body('foodItems.*.name')
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage('Food item name is required'),
+  
+  body('foodItems.*.calories')
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage('Calories must be a positive number'),
+  
+  body('foodItems.*.protein')
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage('Protein must be a positive number'),
+  
+  body('foodItems.*.carbs')
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage('Carbs must be a positive number'),
+  
+  body('foodItems.*.fats')
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage('Fats must be a positive number'),
+  
+  body('notes')
+    .optional()
+    .trim()
+    .isLength({ max: 1000 })
+    .withMessage('Notes cannot exceed 1000 characters')
+];
+
+// Workout validation
+exports.validateWorkout = [
+  body('name')
+    .trim()
+    .notEmpty()
+    .withMessage('Workout name is required')
+    .isLength({ max: 200 })
+    .withMessage('Workout name cannot exceed 200 characters'),
+  
+  body('date')
+    .optional()
+    .isISO8601()
+    .withMessage('Please provide a valid date'),
+  
+  body('exercises')
+    .optional()
+    .isArray()
+    .withMessage('Exercises must be an array'),
+  
+  body('totalDuration')
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage('Duration must be a positive integer'),
+  
+  body('caloriesBurned')
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage('Calories burned must be a positive integer'),
+  
+  body('tags')
+    .optional()
+    .isArray()
+    .withMessage('Tags must be an array')
+];
+

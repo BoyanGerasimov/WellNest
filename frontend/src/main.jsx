@@ -12,7 +12,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         v7_relativeSplatPath: true,
       }}
     >
-      <App />
+    <App />
     </BrowserRouter>
   </React.StrictMode>,
 )
