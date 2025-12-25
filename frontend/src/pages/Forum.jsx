@@ -93,19 +93,31 @@ const Forum = () => {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900">{post.title}</h3>
+                    <Link to={`/forum/${post.id}`}>
+                      <h3 className="text-lg font-semibold text-gray-900 hover:text-indigo-600 transition-colors">
+                        {post.title}
+                      </h3>
+                    </Link>
                     {post.isPinned && <span className="text-yellow-500">📌</span>}
                     <span className="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs rounded-full">
                       {post.category}
                     </span>
                   </div>
-                  <p className="text-gray-600 mb-3 line-clamp-2">{post.content}</p>
+                  <Link to={`/forum/${post.id}`} className="block">
+                    <p className="text-gray-600 mb-3 line-clamp-2 hover:text-indigo-600 transition-colors">
+                      {post.content}
+                    </p>
+                  </Link>
                   <div className="flex items-center gap-4 text-sm text-gray-500">
                     <span>By {post.user?.name || 'Anonymous'}</span>
                     <span>•</span>
                     <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                    <span>•</span>
-                    <span>{post._count?.comments || 0} comments</span>
+                    <Link
+                      to={`/forum/${post.id}`}
+                      className="hover:text-indigo-600 transition-colors"
+                    >
+                      {post._count?.comments || 0} comments
+                    </Link>
                     <span>•</span>
                     <span>{post.views || 0} views</span>
                   </div>

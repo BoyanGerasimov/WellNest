@@ -12,7 +12,10 @@ import WorkoutForm from './pages/WorkoutForm';
 import Meals from './pages/Meals';
 import MealForm from './pages/MealForm';
 import Forum from './pages/Forum';
+import ForumPostForm from './pages/ForumPostForm';
+import ForumPostDetail from './pages/ForumPostDetail';
 import Achievements from './pages/Achievements';
+import Suggestions from './pages/Suggestions';
 
 function App() {
   return (
@@ -34,7 +37,11 @@ function App() {
             <Route path="/meals/new" element={<MealForm />} />
             <Route path="/meals/:id/edit" element={<MealForm />} />
             <Route path="/forum" element={<Forum />} />
+            <Route path="/forum/new" element={<ForumPostForm />} />
+            <Route path="/forum/:id" element={<ForumPostDetail />} />
+            <Route path="/forum/:id/edit" element={<ForumPostForm />} />
             <Route path="/achievements" element={<Achievements />} />
+            <Route path="/suggestions" element={<Suggestions />} />
           </Route>
         </Route>
 
