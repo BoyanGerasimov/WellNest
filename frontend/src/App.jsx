@@ -11,6 +11,8 @@ import Workouts from './pages/Workouts';
 import WorkoutForm from './pages/WorkoutForm';
 import Meals from './pages/Meals';
 import MealForm from './pages/MealForm';
+import Forum from './pages/Forum';
+import Achievements from './pages/Achievements';
 
 function App() {
   return (
@@ -31,6 +33,8 @@ function App() {
             <Route path="/meals" element={<Meals />} />
             <Route path="/meals/new" element={<MealForm />} />
             <Route path="/meals/:id/edit" element={<MealForm />} />
+            <Route path="/forum" element={<Forum />} />
+            <Route path="/achievements" element={<Achievements />} />
           </Route>
         </Route>
 

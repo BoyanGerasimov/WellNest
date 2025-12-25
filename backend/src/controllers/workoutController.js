@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const { validationResult } = require('express-validator');
+const achievementService = require('../services/achievementService');
 
 // Use a single PrismaClient instance (lazy initialization)
 let prisma;
@@ -110,6 +111,11 @@ exports.createWorkout = async (req, res, next) => {
         notes: notes || '',
         tags: tags || []
       }
+    });
+
+    // Check for new achievements (fire and forget)
+    achievementService.checkAchievements(req.user.id).catch(err => {
+      console.error('Error checking achievements:', err);
     });
 
     res.status(201).json({

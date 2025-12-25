@@ -204,6 +204,46 @@ try {
   throw error;
 }
 
+try {
+  console.log('  → Loading suggestion routes...');
+  app.use('/api/suggestions', require('./routes/suggestions'));
+  console.log('✅ Suggestion routes loaded');
+} catch (error) {
+  console.error('❌ Error loading suggestion routes:', error.message);
+  console.error('Stack:', error.stack);
+  throw error;
+}
+
+try {
+  console.log('  → Loading health score routes...');
+  app.use('/api/health-score', require('./routes/healthScore'));
+  console.log('✅ Health score routes loaded');
+} catch (error) {
+  console.error('❌ Error loading health score routes:', error.message);
+  console.error('Stack:', error.stack);
+  throw error;
+}
+
+try {
+  console.log('  → Loading achievement routes...');
+  app.use('/api/achievements', require('./routes/achievements'));
+  console.log('✅ Achievement routes loaded');
+} catch (error) {
+  console.error('❌ Error loading achievement routes:', error.message);
+  console.error('Stack:', error.stack);
+  throw error;
+}
+
+try {
+  console.log('  → Loading forum routes...');
+  app.use('/api/forum', require('./routes/forum'));
+  console.log('✅ Forum routes loaded');
+} catch (error) {
+  console.error('❌ Error loading forum routes:', error.message);
+  console.error('Stack:', error.stack);
+  throw error;
+}
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ 

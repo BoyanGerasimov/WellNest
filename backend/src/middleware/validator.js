@@ -187,3 +187,46 @@ exports.validateWorkout = [
     .withMessage('Tags must be an array')
 ];
 
+// Forum post validation
+exports.validateForumPost = [
+  body('title')
+    .trim()
+    .notEmpty()
+    .withMessage('Title is required')
+    .isLength({ min: 3, max: 200 })
+    .withMessage('Title must be between 3 and 200 characters'),
+  
+  body('content')
+    .trim()
+    .notEmpty()
+    .withMessage('Content is required')
+    .isLength({ min: 10, max: 5000 })
+    .withMessage('Content must be between 10 and 5000 characters'),
+  
+  body('category')
+    .optional()
+    .isIn(['workout', 'nutrition', 'motivation', 'questions', 'general'])
+    .withMessage('Invalid category'),
+  
+  body('tags')
+    .optional()
+    .isArray()
+    .withMessage('Tags must be an array')
+    .custom((tags) => {
+      if (tags.length > 5) {
+        throw new Error('Maximum 5 tags allowed');
+      }
+      return true;
+    })
+];
+
+// Forum comment validation
+exports.validateForumComment = [
+  body('content')
+    .trim()
+    .notEmpty()
+    .withMessage('Comment content is required')
+    .isLength({ min: 1, max: 1000 })
+    .withMessage('Comment must be between 1 and 1000 characters')
+];
+

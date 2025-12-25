@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { workoutService } from '../services/workoutService';
 import { mealService } from '../services/mealService';
+import { healthScoreService } from '../services/healthScoreService';
+import { achievementService } from '../services/achievementService';
+import { suggestionService } from '../services/suggestionService';
 import CalorieChart from '../components/charts/CalorieChart';
 import WorkoutFrequencyChart from '../components/charts/WorkoutFrequencyChart';
 import WeightChart from '../components/charts/WeightChart';
@@ -14,6 +17,9 @@ const Dashboard = () => {
   const [mealStats, setMealStats] = useState(null);
   const [recentWorkouts, setRecentWorkouts] = useState([]);
   const [recentMeals, setRecentMeals] = useState([]);
+  const [healthScore, setHealthScore] = useState(null);
+  const [achievementStats, setAchievementStats] = useState(null);
+  const [suggestions, setSuggestions] = useState(null);
 
   useEffect(() => {
     loadDashboardData();
@@ -28,17 +34,38 @@ const Dashboard = () => {
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       const startDate = thirtyDaysAgo.toISOString().split('T')[0];
 
-      const [workoutStatsRes, mealStatsRes, workoutsRes, mealsRes] = await Promise.all([
+      const [
+        workoutStatsRes,
+        mealStatsRes,
+        workoutsRes,
+        mealsRes,
+        healthScoreRes,
+        achievementStatsRes,
+        suggestionsRes
+      ] = await Promise.all([
         workoutService.getWorkoutStats({ startDate }),
         mealService.getMealStats({ startDate }),
         workoutService.getWorkouts({ limit: 5 }),
-        mealService.getMeals({ limit: 5 })
+        mealService.getMeals({ limit: 5 }),
+        healthScoreService.getHealthScore().catch(() => null),
+        achievementService.getAchievementStats().catch(() => null),
+        suggestionService.getAllSuggestions().catch(() => null)
       ]);
 
       setWorkoutStats(workoutStatsRes.data);
       setMealStats(mealStatsRes.data);
       setRecentWorkouts(workoutsRes.data || []);
       setRecentMeals(mealsRes.data || []);
+      setHealthScore(healthScoreRes?.data || null);
+      setAchievementStats(achievementStatsRes?.data || null);
+      setSuggestions(suggestionsRes?.data || null);
+
+      // Check for new achievements
+      try {
+        await achievementService.checkAchievements();
+      } catch (error) {
+        console.error('Failed to check achievements:', error);
+      }
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
     } finally {
@@ -72,6 +99,124 @@ const Dashboard = () => {
           Here's your fitness overview
         </p>
       </div>
+
+      {/* Health Score & Achievements */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Health Score */}
+        {healthScore && (
+          <div className="bg-gradient-to-br from-purple-500 to-purple-600 overflow-hidden shadow-lg rounded-xl">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-white">Health Score</h2>
+                <span className="text-3xl">{healthScore.grade}</span>
+              </div>
+              <div className="mb-4">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-purple-100 text-sm">Overall Score</span>
+                  <span className="text-2xl font-bold text-white">
+                    {healthScore.totalScore}/{healthScore.maxScore}
+                  </span>
+                </div>
+                <div className="w-full bg-purple-400/30 rounded-full h-3">
+                  <div
+                    className="bg-white h-3 rounded-full transition-all duration-500"
+                    style={{ width: `${healthScore.percentage}%` }}
+                  ></div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                {Object.entries(healthScore.factors).slice(0, 4).map(([key, factor]) => (
+                  <div key={key} className="bg-white/20 rounded p-2">
+                    <p className="text-purple-100 text-xs">{factor.label}</p>
+                    <p className="text-white font-semibold">{factor.score}/{factor.maxScore}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Achievements */}
+        {achievementStats && (
+          <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Achievements</h2>
+            <div className="grid grid-cols-3 gap-4 mb-4">
+              <div className="text-center">
+                <p className="text-3xl font-bold text-indigo-600">{achievementStats.totalAchievements}</p>
+                <p className="text-sm text-gray-500">Unlocked</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-yellow-600">{achievementStats.totalPoints}</p>
+                <p className="text-sm text-gray-500">Points</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-red-600">{achievementStats.currentStreak}</p>
+                <p className="text-sm text-gray-500">Day Streak</p>
+              </div>
+            </div>
+            {achievementStats.achievements && achievementStats.achievements.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {achievementStats.achievements.slice(0, 5).map((achievement) => (
+                  <div
+                    key={achievement.id}
+                    className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2"
+                    title={achievement.description}
+                  >
+                    <span className="text-xl">{achievement.icon}</span>
+                    <span className="text-sm font-medium text-gray-700">{achievement.title}</span>
+                  </div>
+                ))}
+                {achievementStats.achievements.length > 5 && (
+                  <div className="flex items-center justify-center bg-gray-50 rounded-lg px-3 py-2">
+                    <span className="text-sm text-gray-500">
+                      +{achievementStats.achievements.length - 5} more
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Suggestions */}
+      {suggestions && suggestions.all && suggestions.all.length > 0 && (
+        <div className="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-100">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">💡 Suggestions for You</h2>
+          <div className="space-y-3">
+            {suggestions.all.slice(0, 3).map((suggestion, index) => (
+              <div
+                key={index}
+                className={`p-4 rounded-lg border-l-4 ${
+                  suggestion.priority === 'high'
+                    ? 'bg-red-50 border-red-500'
+                    : suggestion.priority === 'medium'
+                    ? 'bg-yellow-50 border-yellow-500'
+                    : 'bg-blue-50 border-blue-500'
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">{suggestion.icon}</span>
+                  <div className="flex-1">
+                    <p className="text-gray-900 font-medium">{suggestion.message}</p>
+                    <span
+                      className={`inline-block mt-1 text-xs px-2 py-1 rounded ${
+                        suggestion.priority === 'high'
+                          ? 'bg-red-100 text-red-700'
+                          : suggestion.priority === 'medium'
+                          ? 'bg-yellow-100 text-yellow-700'
+                          : 'bg-blue-100 text-blue-700'
+                      }`}
+                    >
+                      {suggestion.priority} priority
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
