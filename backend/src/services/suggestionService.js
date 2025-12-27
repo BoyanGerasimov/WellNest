@@ -49,7 +49,9 @@ class SuggestionService {
       // Try AI-powered suggestions first if OpenAI is available
       if (openai) {
         try {
-          return await this.getAIWorkoutSuggestions(user, recentWorkouts);
+          const suggestions = await this.getAIWorkoutSuggestions(user, recentWorkouts);
+          console.log('✅ AI workout suggestions generated successfully');
+          return { suggestions, source: 'ai' };
         } catch (error) {
           // Handle specific error types
           const status = error.status || error.response?.status;
@@ -65,7 +67,9 @@ class SuggestionService {
       }
 
       // Rule-based fallback
-      return this.getRuleBasedWorkoutSuggestions(user, recentWorkouts);
+      const suggestions = this.getRuleBasedWorkoutSuggestions(user, recentWorkouts);
+      console.log('📋 Using rule-based workout suggestions');
+      return { suggestions, source: 'rule-based' };
     } catch (error) {
       console.error('Error getting workout suggestions:', error);
       return [];
@@ -317,7 +321,9 @@ Return ONLY valid JSON, no markdown, no explanation. Example format:
       // Try AI-powered suggestions first if OpenAI is available
       if (openai) {
         try {
-          return await this.getAINutritionSuggestions(user, recentMeals);
+          const suggestions = await this.getAINutritionSuggestions(user, recentMeals);
+          console.log('✅ AI nutrition suggestions generated successfully');
+          return { suggestions, source: 'ai' };
         } catch (error) {
           // Handle specific error types
           const status = error.status || error.response?.status;
@@ -333,7 +339,9 @@ Return ONLY valid JSON, no markdown, no explanation. Example format:
       }
 
       // Rule-based fallback
-      return this.getRuleBasedNutritionSuggestions(user, recentMeals);
+      const suggestions = this.getRuleBasedNutritionSuggestions(user, recentMeals);
+      console.log('📋 Using rule-based nutrition suggestions');
+      return { suggestions, source: 'rule-based' };
     } catch (error) {
       console.error('Error getting nutrition suggestions:', error);
       return [];
@@ -554,10 +562,16 @@ Return ONLY valid JSON, no markdown, no explanation. Example format:
    * @returns {Promise<Object>} Object with workout and nutrition suggestions
    */
   async getAllSuggestions(userId) {
-    const [workoutSuggestions, nutritionSuggestions] = await Promise.all([
+    const [workoutResult, nutritionResult] = await Promise.all([
       this.getWorkoutSuggestions(userId),
       this.getNutritionSuggestions(userId)
     ]);
+
+    // Handle both old format (array) and new format (object with suggestions and source)
+    const workoutSuggestions = Array.isArray(workoutResult) ? workoutResult : workoutResult.suggestions;
+    const nutritionSuggestions = Array.isArray(nutritionResult) ? nutritionResult : nutritionResult.suggestions;
+    const workoutSource = workoutResult.source || 'unknown';
+    const nutritionSource = nutritionResult.source || 'unknown';
 
     return {
       workout: workoutSuggestions,
@@ -565,7 +579,12 @@ Return ONLY valid JSON, no markdown, no explanation. Example format:
       all: [...workoutSuggestions, ...nutritionSuggestions].sort((a, b) => {
         const priorityOrder = { high: 3, medium: 2, low: 1 };
         return priorityOrder[b.priority] - priorityOrder[a.priority];
-      })
+      }),
+      source: {
+        workout: workoutSource,
+        nutrition: nutritionSource,
+        isAI: workoutSource === 'ai' || nutritionSource === 'ai'
+      }
     };
   }
 }
