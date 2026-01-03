@@ -26,24 +26,6 @@ function runCommand(command, description) {
   }
 }
 
-// Helper to run command and show output
-function runCommand(command, description) {
-  console.log(`   ${description}...`);
-  try {
-    execSync(command, {
-      stdio: 'inherit', // Show output in real-time
-      cwd: path.join(__dirname, '..'),
-      env: process.env
-    });
-    return true;
-  } catch (error) {
-    console.error(`   ❌ ${description} failed!`);
-    if (error.stdout) console.error('   Stdout:', error.stdout.toString());
-    if (error.stderr) console.error('   Stderr:', error.stderr.toString());
-    throw error;
-  }
-}
-
 console.log('🔄 Running database migrations...');
 console.log(`   Working directory: ${path.join(__dirname, '..')}`);
 console.log(`   DATABASE_URL: ${process.env.DATABASE_URL ? 'Set' : 'NOT SET'}`);
@@ -58,8 +40,26 @@ try {
   // Run migrations - CRITICAL: Must succeed or server won't start
   console.log('   Executing: npx prisma migrate deploy');
   console.log('   This may take a moment...');
-  runCommand('npx prisma migrate deploy', 'Running migrations');
-  console.log('✅ Migrations completed successfully');
+  
+  try {
+    runCommand('npx prisma migrate deploy', 'Running migrations');
+    console.log('✅ Migrations completed successfully');
+  } catch (migrateError) {
+    console.error('❌ Migration failed!');
+    console.error('   This is a critical error. Server will not start.');
+    console.error('   Error details:', migrateError.message);
+    
+    // Try to provide helpful error message
+    if (migrateError.message.includes('P1001') || migrateError.message.includes('Can\'t reach database')) {
+      console.error('   → Database connection failed. Check DATABASE_URL.');
+    } else if (migrateError.message.includes('P1012') || migrateError.message.includes('Environment variable')) {
+      console.error('   → Missing environment variable. Check DATABASE_URL and DIRECT_URL.');
+    } else {
+      console.error('   → Check the error above for details.');
+    }
+    
+    process.exit(1);
+  }
   
   // Seed test user (non-critical - can fail if user exists)
   console.log('🌱 Checking for test user...');
@@ -69,6 +69,7 @@ try {
   } catch (seedError) {
     // Seed failures are non-fatal (user might already exist)
     console.log('ℹ️  Seed script completed (user may already exist)');
+    console.log('   This is not a critical error - server will continue');
   }
   
   console.log('🚀 Starting server...');
