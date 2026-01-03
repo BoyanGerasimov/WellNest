@@ -27,9 +27,23 @@ function runCommand(command, description) {
 }
 
 console.log('🔄 Running database migrations...');
-console.log(`   Working directory: ${path.join(__dirname, '..')}`);
+const backendDir = path.join(__dirname, '..');
+console.log(`   Working directory: ${backendDir}`);
 console.log(`   DATABASE_URL: ${process.env.DATABASE_URL ? 'Set' : 'NOT SET'}`);
 console.log(`   DIRECT_URL: ${process.env.DIRECT_URL ? 'Set' : 'NOT SET'}`);
+
+// Check if migrations directory exists
+const migrationsDir = path.join(backendDir, 'prisma', 'migrations');
+const fs = require('fs');
+if (fs.existsSync(migrationsDir)) {
+  const migrations = fs.readdirSync(migrationsDir).filter(f => 
+    fs.statSync(path.join(migrationsDir, f)).isDirectory() && f !== 'migration_lock.toml'
+  );
+  console.log(`   Found ${migrations.length} migration(s) in prisma/migrations`);
+  migrations.forEach(m => console.log(`     - ${m}`));
+} else {
+  console.warn(`   ⚠️  Migrations directory not found at: ${migrationsDir}`);
+}
 
 if (!process.env.DATABASE_URL) {
   console.error('❌ DATABASE_URL is not set! Cannot run migrations.');
@@ -42,23 +56,41 @@ try {
   console.log('   This may take a moment...');
   
   try {
+    // First, try migrate deploy (for existing migrations)
     runCommand('npx prisma migrate deploy', 'Running migrations');
     console.log('✅ Migrations completed successfully');
   } catch (migrateError) {
-    console.error('❌ Migration failed!');
-    console.error('   This is a critical error. Server will not start.');
-    console.error('   Error details:', migrateError.message);
-    
-    // Try to provide helpful error message
-    if (migrateError.message.includes('P1001') || migrateError.message.includes('Can\'t reach database')) {
-      console.error('   → Database connection failed. Check DATABASE_URL.');
-    } else if (migrateError.message.includes('P1012') || migrateError.message.includes('Environment variable')) {
-      console.error('   → Missing environment variable. Check DATABASE_URL and DIRECT_URL.');
+    // If "No migration found", try db push as fallback
+    if (migrateError.message.includes('No migration found') || migrateError.message.includes('No pending migrations')) {
+      console.warn('   ⚠️  No migrations found or all migrations already applied');
+      console.log('   Trying prisma db push to sync schema...');
+      
+      try {
+        runCommand('npx prisma db push --accept-data-loss', 'Pushing schema to database');
+        console.log('✅ Database schema synced successfully');
+      } catch (pushError) {
+        console.error('❌ Both migrate deploy and db push failed!');
+        console.error('   Migration error:', migrateError.message);
+        console.error('   Push error:', pushError.message);
+        console.error('   This is a critical error. Server will not start.');
+        process.exit(1);
+      }
     } else {
-      console.error('   → Check the error above for details.');
+      console.error('❌ Migration failed!');
+      console.error('   This is a critical error. Server will not start.');
+      console.error('   Error details:', migrateError.message);
+      
+      // Try to provide helpful error message
+      if (migrateError.message.includes('P1001') || migrateError.message.includes('Can\'t reach database')) {
+        console.error('   → Database connection failed. Check DATABASE_URL.');
+      } else if (migrateError.message.includes('P1012') || migrateError.message.includes('Environment variable')) {
+        console.error('   → Missing environment variable. Check DATABASE_URL and DIRECT_URL.');
+      } else {
+        console.error('   → Check the error above for details.');
+      }
+      
+      process.exit(1);
     }
-    
-    process.exit(1);
   }
   
   // Seed test user (non-critical - can fail if user exists)
