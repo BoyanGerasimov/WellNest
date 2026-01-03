@@ -35,13 +35,11 @@ class NutritionService {
         throw new Error('Search query is required and must be a non-empty string');
       }
 
+      // Simplified params - remove problematic dataType and sortBy for now
       const params = {
         query: query.trim(),
         pageNumber: Math.max(1, parseInt(pageNumber) || 1),
-        pageSize: Math.min(200, Math.max(1, parseInt(pageSize) || 20)),
-        dataType: ['Foundation', 'SR Legacy'], // Foundation foods and Standard Reference
-        sortBy: 'dataType.keyword',
-        sortOrder: 'asc'
+        pageSize: Math.min(200, Math.max(1, parseInt(pageSize) || 20))
       };
 
       // Add API key if available
@@ -70,7 +68,19 @@ class NutritionService {
       if (error.response) {
         // API error response
         const status = error.response.status;
-        const message = error.response.data?.error?.message || error.message;
+        const errorData = error.response.data;
+        const message = errorData?.error?.message || 
+                       errorData?.message || 
+                       errorData?.error ||
+                       error.message;
+        
+        // Log full error for debugging
+        console.error('USDA API Error:', {
+          status,
+          statusText: error.response.statusText,
+          data: errorData,
+          url: error.config?.url
+        });
         
         if (status === 429) {
           throw new Error('USDA API rate limit exceeded. Please try again later.');
@@ -78,6 +88,8 @@ class NutritionService {
           throw new Error(`Invalid search query: ${message}`);
         } else if (status === 404) {
           throw new Error('No foods found matching your search.');
+        } else if (status === 500) {
+          throw new Error(`USDA API server error. The search query "${query.trim()}" may be invalid or the API is temporarily unavailable. Please try a different search term.`);
         }
         
         throw new Error(`USDA API error (${status}): ${message}`);

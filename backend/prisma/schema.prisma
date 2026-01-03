@@ -38,6 +38,7 @@ model User {
   forumPosts        ForumPost[]
   forumComments     ForumComment[]
   forumLikes        ForumLike[]
+  chatMessages      ChatMessage[]
   
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
@@ -160,5 +161,21 @@ model ForumLike {
 
   @@unique([userId, postId, commentId])
   @@map("forum_likes")
+}
+
+// Chat Message Model
+model ChatMessage {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message   String
+  response  String
+  timestamp DateTime @default(now())
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, timestamp(sort: Desc)])
+  @@map("chat_messages")
 }
 

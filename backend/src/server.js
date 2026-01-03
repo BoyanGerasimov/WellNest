@@ -244,6 +244,36 @@ try {
   throw error;
 }
 
+try {
+  console.log('  → Loading chat routes...');
+  app.use('/api/chat', require('./routes/chat'));
+  console.log('✅ Chat routes loaded');
+} catch (error) {
+  console.error('❌ Error loading chat routes:', error.message);
+  console.error('Stack:', error.stack);
+  throw error;
+}
+
+try {
+  console.log('  → Loading analytics routes...');
+  app.use('/api/analytics', require('./routes/analytics'));
+  console.log('✅ Analytics routes loaded');
+} catch (error) {
+  console.error('❌ Error loading analytics routes:', error.message);
+  console.error('Stack:', error.stack);
+  throw error;
+}
+
+try {
+  console.log('  → Loading recipe routes...');
+  app.use('/api/recipes', require('./routes/recipes'));
+  console.log('✅ Recipe routes loaded');
+} catch (error) {
+  console.error('❌ Error loading recipe routes:', error.message);
+  console.error('Stack:', error.stack);
+  throw error;
+}
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ 

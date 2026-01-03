@@ -3,6 +3,13 @@
 **/.env.local
 **/.env.*.local
 
+# Google Cloud service account keys (NEVER commit these!)
+**/google-cloud-key.json
+**/*service-account*.json
+backend/*-*-*.json
+# Pattern for Google Cloud keys: project-id-randomstring.json
+**/*-*-*-*.json
+
 # Node modules
 **/node_modules/
 

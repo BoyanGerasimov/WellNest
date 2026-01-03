@@ -56,11 +56,20 @@ const MealForm = () => {
 
     try {
       setSearching(true);
+      setError(null);
       const response = await mealService.searchFood(searchQuery.trim(), 1, 10);
-      setSearchResults(response.data.foods || []);
+      if (response.success) {
+        setSearchResults(response.data.foods || []);
+      } else {
+        setError(response.message || 'Failed to search foods. Please try again.');
+      }
     } catch (error) {
       console.error('Failed to search foods:', error);
-      alert('Failed to search foods. Please try again.');
+      const errorMessage = error.response?.data?.message || 
+                          error.message || 
+                          'Failed to search foods. Please check your connection and try again.';
+      setError(errorMessage);
+      alert(errorMessage);
     } finally {
       setSearching(false);
     }
@@ -317,6 +326,12 @@ const MealForm = () => {
         {/* Right Column: Food Search */}
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Search Foods</h3>
+          
+          {error && error.includes('search') && (
+            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
+              {error}
+            </div>
+          )}
           
           <form onSubmit={handleSearch} className="mb-4">
             <div className="flex gap-2">
