@@ -50,27 +50,41 @@ const Login = () => {
     // e.g., https://your-backend.railway.app/api
     let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
     
-    // Fix: Ensure it's an absolute URL, not relative
-    // If it starts with /, it's relative - we need to construct the full URL
-    if (API_URL.startsWith('/')) {
-      // Relative URL - construct from current origin + API_URL
-      API_URL = `${window.location.origin}${API_URL}`;
-    } else if (!API_URL.startsWith('http://') && !API_URL.startsWith('https://')) {
-      // If it doesn't start with http/https, it might be malformed
-      console.error('Invalid VITE_API_URL:', API_URL);
-      // Try to extract the Railway URL if it's embedded in the Vercel URL
-      const match = API_URL.match(/railway\.app[^/]*/);
-      if (match) {
-        API_URL = `https://${match[0]}/api`;
-      } else {
-        API_URL = 'http://localhost:5000/api';
+    console.log('Raw VITE_API_URL:', API_URL); // Debug
+    
+    // Validate and fix the URL
+    if (!API_URL) {
+      console.error('VITE_API_URL is not set!');
+      alert('Backend URL not configured. Please contact support.');
+      return;
+    }
+    
+    // If it's just a domain without protocol, add https://
+    if (API_URL.includes('railway.com') || API_URL.includes('railway.app')) {
+      if (!API_URL.startsWith('http://') && !API_URL.startsWith('https://')) {
+        API_URL = `https://${API_URL}`;
       }
     }
     
-    // Remove any trailing slashes and ensure /api is at the end
+    // If it starts with /, it's relative - this is wrong for API URL
+    if (API_URL.startsWith('/')) {
+      console.error('VITE_API_URL is relative, should be absolute:', API_URL);
+      alert('Backend URL misconfigured. Please check Vercel environment variables.');
+      return;
+    }
+    
+    // Ensure it's a valid absolute URL
+    if (!API_URL.startsWith('http://') && !API_URL.startsWith('https://')) {
+      console.error('Invalid VITE_API_URL format:', API_URL);
+      alert('Backend URL misconfigured. Please check Vercel environment variables.');
+      return;
+    }
+    
+    // Remove any trailing slashes
     API_URL = API_URL.replace(/\/+$/, '');
+    
+    // Ensure /api is at the end
     if (!API_URL.endsWith('/api')) {
-      // If /api is not at the end, add it
       if (API_URL.endsWith('/')) {
         API_URL = API_URL + 'api';
       } else {
@@ -80,6 +94,15 @@ const Login = () => {
     
     const oauthUrl = `${API_URL}/auth/oauth/${provider}`;
     console.log('OAuth redirect URL:', oauthUrl); // Debug log
+    console.log('Expected format: https://your-backend.railway.app/api/auth/oauth/google');
+    
+    // Final validation - make sure it looks correct
+    if (!oauthUrl.includes('railway.app') && !oauthUrl.includes('localhost')) {
+      console.error('OAuth URL does not look correct:', oauthUrl);
+      alert(`Invalid backend URL: ${oauthUrl}\n\nPlease set VITE_API_URL in Vercel to:\nhttps://your-backend.railway.app/api`);
+      return;
+    }
+    
     window.location.href = oauthUrl;
   };
 
