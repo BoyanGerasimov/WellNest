@@ -7,7 +7,7 @@ try {
   if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
     const callbackURL = process.env.GOOGLE_CALLBACK_URL || 
-      `${process.env.BACKEND_URL || 'http://localhost:5001'}/api/auth/oauth/google/callback`;
+      `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/auth/oauth/google/callback`;
 
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
