@@ -67,11 +67,11 @@ const Register = () => {
       return;
     }
     
-    // If it's just a domain without protocol, add https://
-    if (API_URL.includes('railway.com') || API_URL.includes('railway.app')) {
-      if (!API_URL.startsWith('http://') && !API_URL.startsWith('https://')) {
-        API_URL = `https://${API_URL}`;
-      }
+    // If it's missing the protocol, add https://
+    if (!API_URL.startsWith('http://') && !API_URL.startsWith('https://')) {
+      // Missing protocol - add https://
+      API_URL = `https://${API_URL}`;
+      console.log('Added https:// protocol:', API_URL);
     }
     
     // If it starts with /, it's relative - this is wrong for API URL
