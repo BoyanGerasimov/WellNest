@@ -55,19 +55,51 @@ try {
   console.log('   Executing: npx prisma migrate deploy');
   console.log('   This may take a moment...');
   
-  try {
-    // First, try migrate deploy (for existing migrations)
-    runCommand('npx prisma migrate deploy', 'Running migrations');
-    console.log('✅ Migrations completed successfully');
-  } catch (migrateError) {
-    // If "No migration found", try db push as fallback
-    if (migrateError.message.includes('No migration found') || migrateError.message.includes('No pending migrations')) {
-      console.warn('   ⚠️  No migrations found or all migrations already applied');
-      console.log('   Trying prisma db push to sync schema...');
+  // Check if migrations directory exists and has migration files
+  const migrationsDir = path.join(backendDir, 'prisma', 'migrations');
+  let useDbPush = false;
+  
+  if (!fs.existsSync(migrationsDir)) {
+    console.warn('   ⚠️  Migrations directory not found');
+    useDbPush = true;
+  } else {
+    const migrationDirs = fs.readdirSync(migrationsDir).filter(f => {
+      const fullPath = path.join(migrationsDir, f);
+      return fs.statSync(fullPath).isDirectory() && f !== 'migration_lock.toml';
+    });
+    
+    if (migrationDirs.length === 0) {
+      console.warn('   ⚠️  No migration files found in migrations directory');
+      useDbPush = true;
+    } else {
+      console.log(`   Found ${migrationDirs.length} migration(s)`);
+    }
+  }
+  
+  if (useDbPush) {
+    // Use db push to sync schema directly (no migration files needed)
+    console.log('   Using prisma db push to sync schema...');
+    try {
+      runCommand('npx prisma db push --accept-data-loss', 'Pushing schema to database');
+      console.log('✅ Database schema synced successfully');
+    } catch (pushError) {
+      console.error('❌ Database schema push failed!');
+      console.error('   Error details:', pushError.message);
+      console.error('   This is a critical error. Server will not start.');
+      process.exit(1);
+    }
+  } else {
+    // Try to deploy migrations
+    try {
+      runCommand('npx prisma migrate deploy', 'Running migrations');
+      console.log('✅ Migrations completed successfully');
+    } catch (migrateError) {
+      console.error('❌ Migration failed!');
+      console.error('   Trying db push as fallback...');
       
       try {
         runCommand('npx prisma db push --accept-data-loss', 'Pushing schema to database');
-        console.log('✅ Database schema synced successfully');
+        console.log('✅ Database schema synced successfully (via fallback)');
       } catch (pushError) {
         console.error('❌ Both migrate deploy and db push failed!');
         console.error('   Migration error:', migrateError.message);
@@ -75,21 +107,6 @@ try {
         console.error('   This is a critical error. Server will not start.');
         process.exit(1);
       }
-    } else {
-      console.error('❌ Migration failed!');
-      console.error('   This is a critical error. Server will not start.');
-      console.error('   Error details:', migrateError.message);
-      
-      // Try to provide helpful error message
-      if (migrateError.message.includes('P1001') || migrateError.message.includes('Can\'t reach database')) {
-        console.error('   → Database connection failed. Check DATABASE_URL.');
-      } else if (migrateError.message.includes('P1012') || migrateError.message.includes('Environment variable')) {
-        console.error('   → Missing environment variable. Check DATABASE_URL and DIRECT_URL.');
-      } else {
-        console.error('   → Check the error above for details.');
-      }
-      
-      process.exit(1);
     }
   }
   
