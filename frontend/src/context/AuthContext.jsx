@@ -15,9 +15,11 @@ export const AuthProvider = ({ children }) => {
         try {
           const currentUser = authService.getCurrentUser();
           if (currentUser) {
-            // Verify token is still valid
+            // Verify token is still valid and get full user data
             const response = await authService.getMe();
             setUser(response.user);
+            // Update localStorage with full user data
+            localStorage.setItem('user', JSON.stringify(response.user));
           }
         } catch (error) {
           console.error('Auth check failed:', error);

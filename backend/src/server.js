@@ -4,6 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 require('dotenv').config();
 
 // Validate required environment variables
@@ -48,6 +49,10 @@ const skipOriginCheckPaths = new Set([
 console.log('📦 Setting up middleware...');
 app.use(helmet());
 console.log('✅ Helmet configured');
+
+// Compression middleware (gzip)
+app.use(compression());
+console.log('✅ Compression configured');
 
 // CORS configuration
 app.use(cors({
@@ -150,12 +155,21 @@ app.get('/api/test-db', async (req, res) => {
 });
 console.log('✅ Health check and test routes configured');
 
+// Rate limiting
+console.log('📦 Setting up rate limiters...');
+const { apiLimiter, authLimiter, aiLimiter } = require('./middleware/rateLimiter');
+app.use('/api', apiLimiter); // Apply to all API routes
+console.log('✅ Rate limiters configured');
+
 // API routes
 console.log('📦 Loading API routes...');
 console.log('  → About to require auth routes...');
 try {
   const authRoutes = require('./routes/auth');
   console.log('  → Auth routes module loaded, registering...');
+  // Apply stricter rate limiting to auth routes
+  app.use('/api/auth/login', authLimiter);
+  app.use('/api/auth/register', authLimiter);
   app.use('/api/auth', authRoutes);
   console.log('✅ Auth routes loaded');
 } catch (error) {
@@ -246,6 +260,8 @@ try {
 
 try {
   console.log('  → Loading chat routes...');
+  // Apply AI rate limiting to chat routes
+  app.use('/api/chat', aiLimiter);
   app.use('/api/chat', require('./routes/chat'));
   console.log('✅ Chat routes loaded');
 } catch (error) {

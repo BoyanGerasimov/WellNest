@@ -46,6 +46,25 @@ exports.googleCallback = async (req, res, next) => {
           }
         });
       }
+      
+      // Get updated user with all fields
+      user = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          avatar: true,
+          dateOfBirth: true,
+          gender: true,
+          height: true,
+          currentWeight: true,
+          goalWeight: true,
+          activityLevel: true,
+          dailyCalorieGoal: true
+        }
+      });
     } else {
       // Create new user
       user = await prisma.user.create({
@@ -57,6 +76,20 @@ exports.googleCallback = async (req, res, next) => {
           avatar: avatar,
           isEmailVerified: true,
           lastLogin: new Date()
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          avatar: true,
+          dateOfBirth: true,
+          gender: true,
+          height: true,
+          currentWeight: true,
+          goalWeight: true,
+          activityLevel: true,
+          dailyCalorieGoal: true
         }
       });
     }

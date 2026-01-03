@@ -68,6 +68,13 @@ exports.register = async (req, res, next) => {
         email: true,
         role: true,
         avatar: true,
+        dateOfBirth: true,
+        gender: true,
+        height: true,
+        currentWeight: true,
+        goalWeight: true,
+        activityLevel: true,
+        dailyCalorieGoal: true,
         createdAt: true
       }
     });
@@ -129,19 +136,32 @@ exports.login = async (req, res, next) => {
       data: { lastLogin: new Date() }
     });
 
+    // Get updated user with all fields
+    const updatedUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        avatar: true,
+        dateOfBirth: true,
+        gender: true,
+        height: true,
+        currentWeight: true,
+        goalWeight: true,
+        activityLevel: true,
+        dailyCalorieGoal: true
+      }
+    });
+
     // Generate token
     const token = generateToken(user.id);
 
     res.status(200).json({
       success: true,
       token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        avatar: user.avatar
-      }
+      user: updatedUser
     });
   } catch (error) {
     next(error);
