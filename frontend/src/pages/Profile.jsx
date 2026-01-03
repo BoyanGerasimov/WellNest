@@ -55,11 +55,11 @@ const Profile = () => {
     <div className="px-4 sm:px-6 lg:px-8 py-8">
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Profile Settings</h1>
-          <p className="mt-2 text-lg text-gray-600">Manage your account information and preferences</p>
+          <h1 className="text-4xl font-bold text-slate-900 tracking-tight">Profile Settings</h1>
+          <p className="mt-2 text-lg text-slate-600">Manage your account information and preferences</p>
         </div>
 
-        <div className="bg-white shadow-lg rounded-xl p-8 border border-gray-100">
+        <div className="bg-white shadow-lg rounded-xl p-8 border border-slate-100">
           {message && (
             <div className={`mb-6 p-4 rounded-lg border-l-4 flex items-center ${
               message.includes('success') 
@@ -81,64 +81,64 @@ const Profile = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Full Name</label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                 placeholder="John Doe"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Height (cm)</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Height (cm)</label>
                 <input
                   type="number"
                   name="height"
                   value={formData.height}
                   onChange={handleChange}
-                  className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                   placeholder="175"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Current Weight (kg)</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Current Weight (kg)</label>
                 <input
                   type="number"
                   step="0.1"
                   name="currentWeight"
                   value={formData.currentWeight}
                   onChange={handleChange}
-                  className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                   placeholder="70.5"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Goal Weight (kg)</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Goal Weight (kg)</label>
               <input
                 type="number"
                 step="0.1"
                 name="goalWeight"
                 value={formData.goalWeight}
                 onChange={handleChange}
-                className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                 placeholder="65.0"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Activity Level</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Activity Level</label>
               <select
                 name="activityLevel"
                 value={formData.activityLevel}
                 onChange={handleChange}
-                className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white"
+                className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all bg-white"
               >
                 <option value="">Select activity level</option>
                 <option value="sedentary">Sedentary</option>
@@ -150,13 +150,13 @@ const Profile = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Daily Calorie Goal</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Daily Calorie Goal</label>
               <input
                 type="number"
                 name="dailyCalorieGoal"
                 value={formData.dailyCalorieGoal}
                 onChange={handleChange}
-                className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                 placeholder="2000"
               />
             </div>
@@ -165,7 +165,7 @@ const Profile = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 {loading ? (
                   <>

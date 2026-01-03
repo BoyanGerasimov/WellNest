@@ -22,7 +22,7 @@ const WorkoutFrequencyChart = ({ workouts }) => {
   if (!workouts || workouts.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow p-6 h-64 flex items-center justify-center">
-        <p className="text-gray-500">No workout data available yet</p>
+        <p className="text-slate-500">No workout data available yet</p>
       </div>
     );
   }
@@ -47,9 +47,11 @@ const WorkoutFrequencyChart = ({ workouts }) => {
       {
         label: 'Workouts',
         data: data,
-        backgroundColor: 'rgba(99, 102, 241, 0.6)',
-        borderColor: 'rgba(99, 102, 241, 1)',
-        borderWidth: 1
+        backgroundColor: 'rgba(20, 184, 166, 0.8)',
+        borderColor: 'rgba(20, 184, 166, 1)',
+        borderWidth: 2,
+        borderRadius: 8,
+        borderSkipped: false
       }
     ]
   };
@@ -62,27 +64,69 @@ const WorkoutFrequencyChart = ({ workouts }) => {
         display: false
       },
       title: {
-        display: true,
-        text: 'Workout Frequency (Last 7 Days)'
+        display: false
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        padding: 12,
+        titleFont: {
+          size: 14,
+          weight: '600'
+        },
+        bodyFont: {
+          size: 13
+        },
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderWidth: 1,
+        cornerRadius: 8
       }
     },
     scales: {
+      x: {
+        grid: {
+          display: false
+        },
+        ticks: {
+          font: {
+            size: 11
+          },
+          color: '#6B7280'
+        }
+      },
       y: {
         beginAtZero: true,
+        grid: {
+          color: 'rgba(0, 0, 0, 0.05)'
+        },
         ticks: {
-          stepSize: 1
+          stepSize: 1,
+          font: {
+            size: 11
+          },
+          color: '#6B7280'
         },
         title: {
           display: true,
-          text: 'Number of Workouts'
+          text: 'Number of Workouts',
+          font: {
+            size: 12,
+            weight: '600'
+          },
+          color: '#374151'
         }
       }
     }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 h-64">
-      <Bar data={chartData} options={options} />
+    <div className="bg-white rounded-xl shadow-lg border border-slate-100 p-6 h-80">
+      <div className="mb-4">
+        <h3 className="text-lg font-bold text-slate-900">Workout Frequency</h3>
+        <p className="text-sm text-slate-500 mt-1">Last 7 days activity</p>
+      </div>
+      <div className="h-64">
+        <Bar data={chartData} options={options} />
+      </div>
     </div>
   );
 };

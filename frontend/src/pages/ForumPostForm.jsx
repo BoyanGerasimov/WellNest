@@ -96,7 +96,7 @@ const ForumPostForm = () => {
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">
+      <h1 className="text-3xl font-bold text-slate-900 mb-6">
         {isEditing ? 'Edit Post' : 'Create New Post'}
       </h1>
 
@@ -108,7 +108,7 @@ const ForumPostForm = () => {
 
       <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-6">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="title" className="block text-sm font-medium text-slate-700 mb-1">
             Title *
           </label>
           <input
@@ -120,13 +120,13 @@ const ForumPostForm = () => {
             maxLength={200}
             value={formData.title}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
             placeholder="Enter post title..."
           />
         </div>
 
         <div>
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="category" className="block text-sm font-medium text-slate-700 mb-1">
             Category *
           </label>
           <select
@@ -135,7 +135,7 @@ const ForumPostForm = () => {
             required
             value={formData.category}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
           >
             {categories.map((cat) => (
               <option key={cat.value} value={cat.value}>
@@ -146,7 +146,7 @@ const ForumPostForm = () => {
         </div>
 
         <div>
-          <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="content" className="block text-sm font-medium text-slate-700 mb-1">
             Content *
           </label>
           <textarea
@@ -158,24 +158,24 @@ const ForumPostForm = () => {
             rows={10}
             value={formData.content}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
             placeholder="Write your post content here..."
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Tags (optional, max 5)</label>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Tags (optional, max 5)</label>
           <div className="flex flex-wrap gap-2 mb-2">
             {formData.tags.map((tag, index) => (
               <span
                 key={index}
-                className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm flex items-center gap-2"
+                className="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm flex items-center gap-2"
               >
                 #{tag}
                 <button
                   type="button"
                   onClick={() => handleRemoveTag(tag)}
-                  className="text-indigo-700 hover:text-indigo-900"
+                  className="text-teal-700 hover:text-teal-900"
                 >
                   ×
                 </button>
@@ -190,12 +190,12 @@ const ForumPostForm = () => {
                 value={newTag}
                 onChange={(e) => setNewTag(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
               <button
                 type="button"
                 onClick={handleAddTag}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md"
+                className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md"
               >
                 Add Tag
               </button>
@@ -207,14 +207,14 @@ const ForumPostForm = () => {
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (isEditing ? 'Updating...' : 'Publishing...') : (isEditing ? 'Update Post' : 'Publish Post')}
           </button>
           <button
             type="button"
             onClick={() => navigate('/forum')}
-            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 border border-slate-300 rounded-md text-slate-700 hover:bg-slate-50"
           >
             Cancel
           </button>

@@ -129,8 +129,8 @@ const WorkoutForm = () => {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading workout...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
+          <p className="mt-4 text-slate-600">Loading workout...</p>
         </div>
       </div>
     );
@@ -138,7 +138,7 @@ const WorkoutForm = () => {
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">
+      <h1 className="text-3xl font-bold text-slate-900 mb-6">
         {isEditing ? 'Edit Workout' : 'Log New Workout'}
       </h1>
 
@@ -150,7 +150,7 @@ const WorkoutForm = () => {
 
       <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-6">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1">
             Workout Name *
           </label>
           <input
@@ -160,13 +160,13 @@ const WorkoutForm = () => {
             required
             value={formData.name}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
             placeholder="e.g., Morning Run, Gym Session"
           />
         </div>
 
         <div>
-          <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="date" className="block text-sm font-medium text-slate-700 mb-1">
             Date *
           </label>
           <input
@@ -176,13 +176,13 @@ const WorkoutForm = () => {
             required
             value={formData.date}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="totalDuration" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="totalDuration" className="block text-sm font-medium text-slate-700 mb-1">
               Duration (minutes)
             </label>
             <input
@@ -192,11 +192,11 @@ const WorkoutForm = () => {
               min="0"
               value={formData.totalDuration}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
           <div>
-            <label htmlFor="caloriesBurned" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="caloriesBurned" className="block text-sm font-medium text-slate-700 mb-1">
               Calories Burned
             </label>
             <input
@@ -206,20 +206,20 @@ const WorkoutForm = () => {
               min="0"
               value={formData.caloriesBurned}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Exercises</label>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Exercises</label>
           <div className="space-y-2 mb-3">
             {formData.exercises.map((exercise, index) => (
-              <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 rounded">
+              <div key={index} className="flex items-center gap-2 p-2 bg-slate-50 rounded">
                 <div className="flex-1">
                   <span className="font-medium">{exercise.name}</span>
                   {(exercise.sets || exercise.reps || exercise.weight || exercise.duration) && (
-                    <span className="text-sm text-gray-500 ml-2">
+                    <span className="text-sm text-slate-500 ml-2">
                       {exercise.sets && `Sets: ${exercise.sets}`}
                       {exercise.reps && ` Reps: ${exercise.reps}`}
                       {exercise.weight && ` Weight: ${exercise.weight}kg`}
@@ -243,12 +243,12 @@ const WorkoutForm = () => {
               placeholder="Exercise name"
               value={newExercise.name}
               onChange={(e) => setNewExercise({ ...newExercise, name: e.target.value })}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
             <button
               type="button"
               onClick={handleAddExercise}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md"
+              className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md"
             >
               Add Exercise
             </button>
@@ -259,45 +259,45 @@ const WorkoutForm = () => {
               placeholder="Sets"
               value={newExercise.sets}
               onChange={(e) => setNewExercise({ ...newExercise, sets: e.target.value })}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
             <input
               type="number"
               placeholder="Reps"
               value={newExercise.reps}
               onChange={(e) => setNewExercise({ ...newExercise, reps: e.target.value })}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
             <input
               type="number"
               placeholder="Weight (kg)"
               value={newExercise.weight}
               onChange={(e) => setNewExercise({ ...newExercise, weight: e.target.value })}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
             <input
               type="number"
               placeholder="Duration (min)"
               value={newExercise.duration}
               onChange={(e) => setNewExercise({ ...newExercise, duration: e.target.value })}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Tags</label>
           <div className="flex flex-wrap gap-2 mb-2">
             {formData.tags.map((tag, index) => (
               <span
                 key={index}
-                className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm flex items-center gap-2"
+                className="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm flex items-center gap-2"
               >
                 {tag}
                 <button
                   type="button"
                   onClick={() => handleRemoveTag(tag)}
-                  className="text-indigo-700 hover:text-indigo-900"
+                  className="text-teal-700 hover:text-teal-900"
                 >
                   ×
                 </button>
@@ -311,12 +311,12 @@ const WorkoutForm = () => {
               value={newTag}
               onChange={(e) => setNewTag(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
             <button
               type="button"
               onClick={handleAddTag}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md"
+              className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md"
             >
               Add Tag
             </button>
@@ -324,7 +324,7 @@ const WorkoutForm = () => {
         </div>
 
         <div>
-          <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="notes" className="block text-sm font-medium text-slate-700 mb-1">
             Notes
           </label>
           <textarea
@@ -333,7 +333,7 @@ const WorkoutForm = () => {
             rows="4"
             value={formData.notes}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
             placeholder="Add any additional notes about your workout..."
           />
         </div>
@@ -342,14 +342,14 @@ const WorkoutForm = () => {
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Saving...' : isEditing ? 'Update Workout' : 'Save Workout'}
           </button>
           <button
             type="button"
             onClick={() => navigate('/workouts')}
-            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 border border-slate-300 rounded-md text-slate-700 hover:bg-slate-50"
           >
             Cancel
           </button>

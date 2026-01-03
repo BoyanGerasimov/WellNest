@@ -27,13 +27,13 @@ const Suggestions = () => {
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'high':
-        return 'bg-red-50 border-red-500 text-red-700';
+        return 'bg-orange-50 border-orange-500 text-orange-700';
       case 'medium':
-        return 'bg-yellow-50 border-yellow-500 text-yellow-700';
+        return 'bg-amber-50 border-amber-500 text-amber-700';
       case 'low':
-        return 'bg-blue-50 border-blue-500 text-blue-700';
+        return 'bg-teal-50 border-teal-500 text-teal-700';
       default:
-        return 'bg-gray-50 border-gray-500 text-gray-700';
+        return 'bg-slate-50 border-slate-500 text-slate-700';
     }
   };
 
@@ -41,8 +41,8 @@ const Suggestions = () => {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading suggestions...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
+          <p className="mt-4 text-slate-600">Loading suggestions...</p>
         </div>
       </div>
     );
@@ -58,11 +58,11 @@ const Suggestions = () => {
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">AI Suggestions</h1>
+        <h1 className="text-3xl font-bold text-slate-900">AI Suggestions</h1>
         <div className={`px-4 py-2 rounded-lg text-sm font-medium ${
           isAI 
-            ? 'bg-green-100 text-green-800 border border-green-300' 
-            : 'bg-yellow-100 text-yellow-800 border border-yellow-300'
+            ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
+            : 'bg-amber-100 text-amber-800 border border-amber-300'
         }`}>
           {isAI ? (
             <span className="flex items-center gap-2">
@@ -84,8 +84,8 @@ const Suggestions = () => {
           onClick={() => setActiveTab('all')}
           className={`px-4 py-2 font-medium transition-colors ${
             activeTab === 'all'
-              ? 'border-b-2 border-indigo-600 text-indigo-600'
-              : 'text-gray-500 hover:text-gray-700'
+              ? 'border-b-2 border-teal-600 text-teal-600'
+              : 'text-slate-500 hover:text-slate-700'
           }`}
         >
           All ({suggestions?.all?.length || 0})
@@ -94,8 +94,8 @@ const Suggestions = () => {
           onClick={() => setActiveTab('workout')}
           className={`px-4 py-2 font-medium transition-colors ${
             activeTab === 'workout'
-              ? 'border-b-2 border-indigo-600 text-indigo-600'
-              : 'text-gray-500 hover:text-gray-700'
+              ? 'border-b-2 border-teal-600 text-teal-600'
+              : 'text-slate-500 hover:text-slate-700'
           }`}
         >
           Workout ({suggestions?.workout?.length || 0})
@@ -104,8 +104,8 @@ const Suggestions = () => {
           onClick={() => setActiveTab('nutrition')}
           className={`px-4 py-2 font-medium transition-colors ${
             activeTab === 'nutrition'
-              ? 'border-b-2 border-indigo-600 text-indigo-600'
-              : 'text-gray-500 hover:text-gray-700'
+              ? 'border-b-2 border-teal-600 text-teal-600'
+              : 'text-slate-500 hover:text-slate-700'
           }`}
         >
           Nutrition ({suggestions?.nutrition?.length || 0})
@@ -116,8 +116,8 @@ const Suggestions = () => {
       <div className="space-y-4">
         {displaySuggestions.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-lg shadow">
-            <p className="text-gray-500 mb-2">No suggestions available</p>
-            <p className="text-sm text-gray-400">
+            <p className="text-slate-500 mb-2">No suggestions available</p>
+            <p className="text-sm text-slate-400">
               Start logging workouts and meals to get personalized suggestions!
             </p>
           </div>
@@ -130,20 +130,20 @@ const Suggestions = () => {
               <div className="flex items-start gap-4">
                 <span className="text-3xl">{suggestion.icon || '💡'}</span>
                 <div className="flex-1">
-                  <p className="text-gray-900 font-medium mb-2">{suggestion.message}</p>
+                  <p className="text-slate-900 font-medium mb-2">{suggestion.message}</p>
                   <div className="flex items-center gap-2">
                     <span
                       className={`px-2 py-1 rounded text-xs font-medium ${
                         suggestion.priority === 'high'
-                          ? 'bg-red-100 text-red-700'
+                          ? 'bg-orange-100 text-orange-700'
                           : suggestion.priority === 'medium'
-                          ? 'bg-yellow-100 text-yellow-700'
-                          : 'bg-blue-100 text-blue-700'
+                          ? 'bg-amber-100 text-amber-700'
+                          : 'bg-teal-100 text-teal-700'
                       }`}
                     >
                       {suggestion.priority} priority
                     </span>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-slate-500">
                       {suggestion.type?.replace(/_/g, ' ')}
                     </span>
                   </div>
@@ -157,11 +157,11 @@ const Suggestions = () => {
       {/* Info Box */}
       <div className={`mt-8 rounded-lg p-4 ${
         isAI 
-          ? 'bg-green-50 border border-green-200' 
-          : 'bg-yellow-50 border border-yellow-200'
+          ? 'bg-emerald-50 border border-emerald-200' 
+          : 'bg-amber-50 border border-amber-200'
       }`}>
         <p className={`text-sm ${
-          isAI ? 'text-green-700' : 'text-yellow-700'
+          isAI ? 'text-emerald-700' : 'text-amber-700'
         }`}>
           {isAI ? (
             <>

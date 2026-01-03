@@ -60,16 +60,30 @@ const CalorieChart = ({ mealStats, workoutStats }) => {
       {
         label: 'Calories Intake',
         data: intakeData,
-        borderColor: 'rgb(59, 130, 246)',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        tension: 0.4
+        borderColor: 'rgb(20, 184, 166)',
+        backgroundColor: 'rgba(20, 184, 166, 0.1)',
+        borderWidth: 3,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        pointBackgroundColor: 'rgb(20, 184, 166)',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        tension: 0.4,
+        fill: true
       },
       {
         label: 'Calories Burned',
         data: burnedData,
         borderColor: 'rgb(239, 68, 68)',
         backgroundColor: 'rgba(239, 68, 68, 0.1)',
-        tension: 0.4
+        borderWidth: 3,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        pointBackgroundColor: 'rgb(239, 68, 68)',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        tension: 0.4,
+        fill: true
       }
     ]
   };
@@ -80,18 +94,64 @@ const CalorieChart = ({ mealStats, workoutStats }) => {
     plugins: {
       legend: {
         position: 'top',
+        labels: {
+          usePointStyle: true,
+          padding: 15,
+          font: {
+            size: 12,
+            weight: '500'
+          }
+        }
       },
       title: {
-        display: true,
-        text: 'Calorie Intake vs Burned'
+        display: false
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        padding: 12,
+        titleFont: {
+          size: 14,
+          weight: '600'
+        },
+        bodyFont: {
+          size: 13
+        },
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderWidth: 1,
+        cornerRadius: 8
       }
     },
     scales: {
+      x: {
+        grid: {
+          display: false
+        },
+        ticks: {
+          font: {
+            size: 11
+          },
+          color: '#6B7280'
+        }
+      },
       y: {
         beginAtZero: true,
+        grid: {
+          color: 'rgba(0, 0, 0, 0.05)'
+        },
+        ticks: {
+          font: {
+            size: 11
+          },
+          color: '#6B7280'
+        },
         title: {
           display: true,
-          text: 'Calories'
+          text: 'Calories',
+          font: {
+            size: 12,
+            weight: '600'
+          },
+          color: '#374151'
         }
       }
     }
@@ -99,15 +159,25 @@ const CalorieChart = ({ mealStats, workoutStats }) => {
 
   if (labels.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow p-6 h-64 flex items-center justify-center">
-        <p className="text-gray-500">No calorie data available yet</p>
+      <div className="bg-white rounded-xl shadow-lg border border-slate-100 p-8 h-80 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-5xl mb-3">📊</div>
+          <p className="text-slate-500 font-medium">No calorie data available yet</p>
+          <p className="text-sm text-slate-400 mt-1">Start logging meals and workouts to see your progress</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 h-64">
-      <Line data={data} options={options} />
+    <div className="bg-white rounded-xl shadow-lg border border-slate-100 p-6 h-80">
+      <div className="mb-4">
+        <h3 className="text-lg font-bold text-slate-900">Calorie Intake vs Burned</h3>
+        <p className="text-sm text-slate-500 mt-1">Track your daily calorie balance</p>
+      </div>
+      <div className="h-64">
+        <Line data={data} options={options} />
+      </div>
     </div>
   );
 };

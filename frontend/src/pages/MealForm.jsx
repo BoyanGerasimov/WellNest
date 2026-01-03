@@ -456,8 +456,8 @@ const MealForm = () => {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading meal...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
+          <p className="mt-4 text-slate-600">Loading meal...</p>
         </div>
       </div>
     );
@@ -465,7 +465,7 @@ const MealForm = () => {
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">
+      <h1 className="text-3xl font-bold text-slate-900 mb-6">
         {isEditing ? 'Edit Meal' : 'Log Meal'}
       </h1>
 
@@ -481,7 +481,7 @@ const MealForm = () => {
           <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-6">
             {/* Meal Type Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-medium text-slate-700 mb-3">
                 Meal Type *
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -490,8 +490,8 @@ const MealForm = () => {
                   onClick={() => setFormData(prev => ({ ...prev, type: 'breakfast' }))}
                   className={`px-4 py-3 rounded-lg font-medium transition-all ${
                     formData.type === 'breakfast'
-                      ? 'bg-indigo-600 text-white shadow-md'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-teal-600 text-white shadow-md'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
                   🍳 Breakfast
@@ -501,8 +501,8 @@ const MealForm = () => {
                   onClick={() => setFormData(prev => ({ ...prev, type: 'lunch' }))}
                   className={`px-4 py-3 rounded-lg font-medium transition-all ${
                     formData.type === 'lunch'
-                      ? 'bg-indigo-600 text-white shadow-md'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-teal-600 text-white shadow-md'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
                   🥗 Lunch
@@ -512,8 +512,8 @@ const MealForm = () => {
                   onClick={() => setFormData(prev => ({ ...prev, type: 'dinner' }))}
                   className={`px-4 py-3 rounded-lg font-medium transition-all ${
                     formData.type === 'dinner'
-                      ? 'bg-indigo-600 text-white shadow-md'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-teal-600 text-white shadow-md'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
                   🍽️ Dinner
@@ -523,8 +523,8 @@ const MealForm = () => {
                   onClick={() => setFormData(prev => ({ ...prev, type: 'snack' }))}
                   className={`px-4 py-3 rounded-lg font-medium transition-all ${
                     formData.type === 'snack'
-                      ? 'bg-indigo-600 text-white shadow-md'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-teal-600 text-white shadow-md'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
                   🍎 Snacks
@@ -534,10 +534,10 @@ const MealForm = () => {
 
             {/* Date Display - Always current date */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-700 mb-1">
                 Date
               </label>
-              <div className="px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-700">
+              <div className="px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-slate-700">
                 {new Date(formData.date).toLocaleDateString('en-US', { 
                   weekday: 'long', 
                   year: 'numeric', 
@@ -548,13 +548,13 @@ const MealForm = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Food Items</label>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Food Items</label>
               <div className="space-y-2 mb-3">
                 {formData.foodItems.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                  <div key={index} className="flex items-center justify-between p-2 bg-slate-50 rounded">
                     <div className="flex-1">
                       <span className="font-medium">{item.name}</span>
-                      <span className="text-sm text-gray-500 ml-2">
+                      <span className="text-sm text-slate-500 ml-2">
                         {Math.round(item.calories)} cal
                       </span>
                     </div>
@@ -571,7 +571,7 @@ const MealForm = () => {
             </div>
 
             <div>
-              <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="notes" className="block text-sm font-medium text-slate-700 mb-1">
                 Notes
               </label>
               <textarea
@@ -580,7 +580,7 @@ const MealForm = () => {
                 rows="3"
                 value={formData.notes}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 placeholder="Add any additional notes..."
               />
             </div>
@@ -589,14 +589,14 @@ const MealForm = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Saving...' : isEditing ? 'Update Meal' : 'Save Meal'}
               </button>
               <button
                 type="button"
                 onClick={() => navigate('/meals')}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-slate-300 rounded-md text-slate-700 hover:bg-slate-50"
               >
                 Cancel
               </button>
@@ -606,23 +606,23 @@ const MealForm = () => {
           {/* Nutrition Summary */}
           {formData.foodItems.length > 0 && (
             <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Nutrition Summary</h3>
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">Nutrition Summary</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="text-sm text-gray-500">Total Calories</span>
-                  <p className="text-2xl font-bold text-gray-900">{Math.round(totals.calories)}</p>
+                  <span className="text-sm text-slate-500">Total Calories</span>
+                  <p className="text-2xl font-bold text-slate-900">{Math.round(totals.calories)}</p>
                 </div>
                 <div>
-                  <span className="text-sm text-gray-500">Protein</span>
-                  <p className="text-2xl font-bold text-gray-900">{totals.protein.toFixed(1)}g</p>
+                  <span className="text-sm text-slate-500">Protein</span>
+                  <p className="text-2xl font-bold text-slate-900">{totals.protein.toFixed(1)}g</p>
                 </div>
                 <div>
-                  <span className="text-sm text-gray-500">Carbs</span>
-                  <p className="text-2xl font-bold text-gray-900">{totals.carbs.toFixed(1)}g</p>
+                  <span className="text-sm text-slate-500">Carbs</span>
+                  <p className="text-2xl font-bold text-slate-900">{totals.carbs.toFixed(1)}g</p>
                 </div>
                 <div>
-                  <span className="text-sm text-gray-500">Fats</span>
-                  <p className="text-2xl font-bold text-gray-900">{totals.fats.toFixed(1)}g</p>
+                  <span className="text-sm text-slate-500">Fats</span>
+                  <p className="text-2xl font-bold text-slate-900">{totals.fats.toFixed(1)}g</p>
                 </div>
               </div>
             </div>
@@ -632,14 +632,14 @@ const MealForm = () => {
         {/* Right Column: Food Search/Scanner */}
         <div className="bg-white rounded-lg shadow p-6">
           {/* Tabs */}
-          <div className="flex gap-2 mb-4 border-b border-gray-200">
+          <div className="flex gap-2 mb-4 border-b border-slate-200">
             <button
               type="button"
               onClick={() => setActiveTab('search')}
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'search'
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-teal-600 text-teal-600'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
               }`}
             >
               🔍 Search
@@ -649,8 +649,8 @@ const MealForm = () => {
               onClick={() => setActiveTab('barcode')}
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'barcode'
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-teal-600 text-teal-600'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
               }`}
             >
               📷 Barcode
@@ -660,8 +660,8 @@ const MealForm = () => {
               onClick={() => setActiveTab('meal')}
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'meal'
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-teal-600 text-teal-600'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
               }`}
             >
               🍽️ Meal Scanner
@@ -671,7 +671,7 @@ const MealForm = () => {
           {/* Search Tab */}
           {activeTab === 'search' && (
             <>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Search Foods</h3>
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">Search Foods</h3>
               
               {error && error.includes('search') && (
                 <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
@@ -686,26 +686,26 @@ const MealForm = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Type to search (e.g., apple, chicken breast)..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 pr-10"
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 pr-10"
               />
               {searching && (
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-indigo-600"></div>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-teal-600"></div>
                 </div>
               )}
             </div>
             {searchQuery.length > 0 && searchQuery.length < 2 && (
-              <p className="mt-2 text-xs text-gray-500">Type at least 2 characters to search</p>
+              <p className="mt-2 text-xs text-slate-500">Type at least 2 characters to search</p>
             )}
           </div>
 
           {searchResults.length > 0 && (
             <div className="mb-2">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-slate-600">
                   {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-slate-500">
                   Sorted by calories (lowest first)
                 </span>
               </div>
@@ -717,15 +717,15 @@ const MealForm = () => {
                   onClick={() => handleSelectFood(food)}
                   className={`w-full text-left p-3 rounded border transition-colors ${
                     selectedFood?.fdcId === food.fdcId
-                      ? 'border-indigo-500 bg-indigo-50'
-                      : 'border-gray-200 hover:bg-gray-50'
+                      ? 'border-teal-500 bg-teal-50'
+                      : 'border-slate-200 hover:bg-slate-50'
                   }`}
                 >
-                  <p className="font-medium text-gray-900">{food.description}</p>
+                  <p className="font-medium text-slate-900">{food.description}</p>
                   {food.brandOwner && (
-                    <p className="text-sm text-gray-500">{food.brandOwner}</p>
+                    <p className="text-sm text-slate-500">{food.brandOwner}</p>
                   )}
-                  <p className="text-xs text-gray-400 mt-1">
+                  <p className="text-xs text-slate-400 mt-1">
                     {food.nutrients && food.nutrients.calories > 0 
                       ? `${Math.round(food.nutrients.calories)} cal per 100g`
                       : 'Loading calories...'}
@@ -738,15 +738,15 @@ const MealForm = () => {
 
           {loadingNutrition && (
             <div className="text-center py-4">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div>
-              <p className="mt-2 text-sm text-gray-500">Loading nutrition data...</p>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto"></div>
+              <p className="mt-2 text-sm text-slate-500">Loading nutrition data...</p>
             </div>
           )}
 
           {/* Nutrition Display (shown when food is selected from any tab) */}
           {nutritionData && selectedFood && (
             <div className="border-t pt-4">
-              <h4 className="font-semibold text-gray-900 mb-3">{selectedFood.description}</h4>
+              <h4 className="font-semibold text-slate-900 mb-3">{selectedFood.description}</h4>
               {nutritionData.note && (
                 <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
                   ℹ️ {nutritionData.note}
@@ -755,7 +755,7 @@ const MealForm = () => {
               
               {/* Portion Size Input */}
               <div className="mb-4">
-                <label htmlFor="portionSize" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="portionSize" className="block text-sm font-medium text-slate-700 mb-2">
                   Portion Size (grams)
                 </label>
                 <div className="flex gap-2">
@@ -784,12 +784,12 @@ const MealForm = () => {
                         setPortionSize(nutritionData.servingSize || 100);
                       }
                     }}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                     placeholder="100"
                   />
-                  <span className="px-3 py-2 text-gray-600">g</span>
+                  <span className="px-3 py-2 text-slate-600">g</span>
                 </div>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-slate-500">
                   Base serving: {nutritionData.servingSize || 100}{nutritionData.servingSizeUnit || 'g'}
                 </p>
                 {portionSize === 0 && (
@@ -801,29 +801,29 @@ const MealForm = () => {
 
               {/* Nutrition Values (calculated based on portion size) */}
               {portionSize > 0 ? (
-                <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                  <p className="text-xs text-gray-500 mb-2">Nutrition for {portionSize}g:</p>
+                <div className="mb-4 p-3 bg-slate-50 rounded-lg">
+                  <p className="text-xs text-slate-500 mb-2">Nutrition for {portionSize}g:</p>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div>
-                      <span className="text-gray-500">Calories:</span>
+                      <span className="text-slate-500">Calories:</span>
                       <span className="ml-2 font-medium">
                         {Math.round((nutritionData.nutrients?.calories || 0) * (portionSize / (nutritionData.servingSize || 100)))}
                       </span>
                     </div>
                     <div>
-                      <span className="text-gray-500">Protein:</span>
+                      <span className="text-slate-500">Protein:</span>
                       <span className="ml-2 font-medium">
                         {((nutritionData.nutrients?.protein || 0) * (portionSize / (nutritionData.servingSize || 100))).toFixed(1)}g
                       </span>
                     </div>
                     <div>
-                      <span className="text-gray-500">Carbs:</span>
+                      <span className="text-slate-500">Carbs:</span>
                       <span className="ml-2 font-medium">
                         {((nutritionData.nutrients?.carbs || 0) * (portionSize / (nutritionData.servingSize || 100))).toFixed(1)}g
                       </span>
                     </div>
                     <div>
-                      <span className="text-gray-500">Fats:</span>
+                      <span className="text-slate-500">Fats:</span>
                       <span className="ml-2 font-medium">
                         {((nutritionData.nutrients?.fat || 0) * (portionSize / (nutritionData.servingSize || 100))).toFixed(1)}g
                       </span>
@@ -840,7 +840,7 @@ const MealForm = () => {
                 type="button"
                 onClick={handleAddFoodItem}
                 disabled={portionSize === 0 || portionSize < 1}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-md font-medium transition-colors"
+                className="w-full bg-teal-600 hover:bg-teal-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-md font-medium transition-colors"
               >
                 Add to Meal
               </button>
@@ -851,7 +851,7 @@ const MealForm = () => {
           {/* Barcode Scanner Tab */}
           {activeTab === 'barcode' && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Scan Barcode</h3>
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">Scan Barcode</h3>
               
               {barcodeError && (
                 <div className="mb-4 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded text-sm">
@@ -877,7 +877,7 @@ const MealForm = () => {
                   <button
                     type="button"
                     onClick={startCameraScan}
-                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-lg font-semibold mb-4 flex items-center justify-center gap-2"
+                    className="w-full bg-teal-600 hover:bg-teal-700 text-white px-4 py-3 rounded-lg font-semibold mb-4 flex items-center justify-center gap-2"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -885,7 +885,7 @@ const MealForm = () => {
                     </svg>
                     Scan with Camera
                   </button>
-                  <div className="text-center text-sm text-gray-500 mb-4">or</div>
+                  <div className="text-center text-sm text-slate-500 mb-4">or</div>
                 </div>
               ) : (
                 <div className="mb-4">
@@ -905,7 +905,7 @@ const MealForm = () => {
                     </svg>
                     Stop Camera
                   </button>
-                  <p className="mt-2 text-xs text-center text-gray-500">
+                  <p className="mt-2 text-xs text-center text-slate-500">
                     Point your camera at a barcode to scan
                   </p>
                 </div>
@@ -914,7 +914,7 @@ const MealForm = () => {
               {/* Manual Input */}
               {!cameraScanning && (
                 <div className="mb-4">
-                  <label htmlFor="barcodeInput" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="barcodeInput" className="block text-sm font-medium text-slate-700 mb-2">
                     Or Enter Barcode Manually (UPC, EAN, etc.)
                   </label>
                   <div className="flex gap-2">
@@ -928,7 +928,7 @@ const MealForm = () => {
                           handleBarcodeInput(e.target.value);
                         }
                       }}
-                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="flex-1 px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                     />
                     <button
                       type="button"
@@ -937,12 +937,12 @@ const MealForm = () => {
                         if (input) handleBarcodeInput(input.value);
                       }}
                       disabled={barcodeScanning}
-                      className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white px-6 py-3 rounded-lg font-semibold disabled:cursor-not-allowed"
+                      className="bg-teal-600 hover:bg-teal-700 disabled:bg-slate-300 text-white px-6 py-3 rounded-lg font-semibold disabled:cursor-not-allowed"
                     >
                       {barcodeScanning ? 'Looking up...' : 'Lookup'}
                     </button>
                   </div>
-                  <p className="mt-2 text-xs text-gray-500">
+                  <p className="mt-2 text-xs text-slate-500">
                     Enter the barcode number from a food product package
                   </p>
                 </div>
@@ -950,8 +950,8 @@ const MealForm = () => {
 
               {barcodeScanning && !cameraScanning && (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-                  <p className="mt-4 text-gray-600">Looking up product...</p>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
+                  <p className="mt-4 text-slate-600">Looking up product...</p>
                 </div>
               )}
             </div>
@@ -960,7 +960,7 @@ const MealForm = () => {
           {/* Meal Scanner Tab */}
           {activeTab === 'meal' && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Scan Meal/Recipe</h3>
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">Scan Meal/Recipe</h3>
               
               {error && error.includes('scan') && (
                 <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
@@ -969,7 +969,7 @@ const MealForm = () => {
               )}
 
               {!mealPreview ? (
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center">
                   <input
                     type="file"
                     accept="image/*"
@@ -982,7 +982,7 @@ const MealForm = () => {
                     className="cursor-pointer flex flex-col items-center"
                   >
                     <svg
-                      className="w-12 h-12 text-gray-400 mb-4"
+                      className="w-12 h-12 text-slate-400 mb-4"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -994,8 +994,8 @@ const MealForm = () => {
                         d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                       />
                     </svg>
-                    <span className="text-gray-600 font-medium">Click to upload meal/recipe image</span>
-                    <span className="text-sm text-gray-400 mt-1">PNG, JPG, GIF up to 10MB</span>
+                    <span className="text-slate-600 font-medium">Click to upload meal/recipe image</span>
+                    <span className="text-sm text-slate-400 mt-1">PNG, JPG, GIF up to 10MB</span>
                   </label>
                 </div>
               ) : (
@@ -1004,7 +1004,7 @@ const MealForm = () => {
                     <img
                       src={mealPreview}
                       alt="Meal preview"
-                      className="w-full max-h-64 object-contain rounded-lg border border-gray-200"
+                      className="w-full max-h-64 object-contain rounded-lg border border-slate-200"
                     />
                     <button
                       type="button"
@@ -1024,7 +1024,7 @@ const MealForm = () => {
                     type="button"
                     onClick={handleScanMeal}
                     disabled={mealScanning}
-                    className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white px-4 py-3 rounded-lg font-semibold disabled:cursor-not-allowed"
+                    className="w-full bg-teal-600 hover:bg-teal-700 disabled:bg-slate-300 text-white px-4 py-3 rounded-lg font-semibold disabled:cursor-not-allowed"
                   >
                     {mealScanning ? 'Scanning Meal...' : 'Scan Meal'}
                   </button>
@@ -1033,41 +1033,41 @@ const MealForm = () => {
 
               {mealScanning && (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-                  <p className="mt-4 text-gray-600">Analyzing meal image...</p>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
+                  <p className="mt-4 text-slate-600">Analyzing meal image...</p>
                 </div>
               )}
 
               {mealScanResult && (
-                <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                  <h4 className="font-semibold text-gray-900 mb-3">Identified Meal:</h4>
-                  <p className="text-gray-800 font-medium mb-4">{mealScanResult.mealName}</p>
+                <div className="mt-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                  <h4 className="font-semibold text-slate-900 mb-3">Identified Meal:</h4>
+                  <p className="text-slate-800 font-medium mb-4">{mealScanResult.mealName}</p>
                   
                   {mealScanResult.nutrition && (
                     <div className="mb-4">
-                      <p className="text-sm text-gray-600 mb-2">Estimated Nutrition ({mealScanResult.servingSize}):</p>
+                      <p className="text-sm text-slate-600 mb-2">Estimated Nutrition ({mealScanResult.servingSize}):</p>
                       <div className="grid grid-cols-2 gap-3 text-sm">
                         <div>
-                          <span className="text-gray-500">Calories:</span>
-                          <span className="ml-2 font-semibold text-gray-900">
+                          <span className="text-slate-500">Calories:</span>
+                          <span className="ml-2 font-semibold text-slate-900">
                             {Math.round(mealScanResult.nutrition.calories || 0)} kcal
                           </span>
                         </div>
                         <div>
-                          <span className="text-gray-500">Protein:</span>
-                          <span className="ml-2 font-semibold text-gray-900">
+                          <span className="text-slate-500">Protein:</span>
+                          <span className="ml-2 font-semibold text-slate-900">
                             {parseFloat((mealScanResult.nutrition.protein || 0).toFixed(1))}g
                           </span>
                         </div>
                         <div>
-                          <span className="text-gray-500">Carbs:</span>
-                          <span className="ml-2 font-semibold text-gray-900">
+                          <span className="text-slate-500">Carbs:</span>
+                          <span className="ml-2 font-semibold text-slate-900">
                             {parseFloat((mealScanResult.nutrition.carbs || 0).toFixed(1))}g
                           </span>
                         </div>
                         <div>
-                          <span className="text-gray-500">Fat:</span>
-                          <span className="ml-2 font-semibold text-gray-900">
+                          <span className="text-slate-500">Fat:</span>
+                          <span className="ml-2 font-semibold text-slate-900">
                             {parseFloat((mealScanResult.nutrition.fat || 0).toFixed(1))}g
                           </span>
                         </div>
@@ -1078,7 +1078,7 @@ const MealForm = () => {
                   <button
                     type="button"
                     onClick={handleAddScannedMeal}
-                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium"
+                    className="w-full bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-medium"
                   >
                     Add Meal to Log
                   </button>

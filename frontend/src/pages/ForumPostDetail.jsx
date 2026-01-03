@@ -82,8 +82,8 @@ const ForumPostDetail = () => {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading post...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
+          <p className="mt-4 text-slate-600">Loading post...</p>
         </div>
       </div>
     );
@@ -93,8 +93,8 @@ const ForumPostDetail = () => {
     return (
       <div className="px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center py-12">
-          <p className="text-gray-500 mb-4">Post not found</p>
-          <Link to="/forum" className="text-indigo-600 hover:text-indigo-700">
+          <p className="text-slate-500 mb-4">Post not found</p>
+          <Link to="/forum" className="text-teal-600 hover:text-teal-700">
             ← Back to Forum
           </Link>
         </div>
@@ -106,7 +106,7 @@ const ForumPostDetail = () => {
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 max-w-4xl mx-auto">
-      <Link to="/forum" className="text-indigo-600 hover:text-indigo-700 mb-4 inline-block">
+      <Link to="/forum" className="text-teal-600 hover:text-teal-700 mb-4 inline-block">
         ← Back to Forum
       </Link>
 
@@ -115,13 +115,13 @@ const ForumPostDetail = () => {
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-2xl font-bold text-gray-900">{post.title}</h1>
+              <h1 className="text-2xl font-bold text-slate-900">{post.title}</h1>
               {post.isPinned && <span className="text-yellow-500 text-xl">📌</span>}
-              <span className="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs rounded-full">
+              <span className="px-2 py-1 bg-teal-100 text-teal-700 text-xs rounded-full">
                 {post.category}
               </span>
             </div>
-            <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+            <div className="flex items-center gap-4 text-sm text-slate-500 mb-4">
               <div className="flex items-center gap-2">
                 {post.user?.avatar && (
                   <img src={post.user.avatar} alt={post.user.name} className="w-6 h-6 rounded-full" />
@@ -139,7 +139,7 @@ const ForumPostDetail = () => {
             className={`p-2 rounded transition-colors ${
               post.isLiked
                 ? 'text-red-600 hover:bg-red-50'
-                : 'text-gray-400 hover:bg-gray-50'
+                : 'text-slate-400 hover:bg-slate-50'
             }`}
           >
             <span className="text-2xl">{post.isLiked ? '❤️' : '🤍'}</span>
@@ -148,7 +148,7 @@ const ForumPostDetail = () => {
         </div>
 
         <div className="prose max-w-none mb-4">
-          <p className="text-gray-700 whitespace-pre-wrap">{post.content}</p>
+          <p className="text-slate-700 whitespace-pre-wrap">{post.content}</p>
         </div>
 
         {post.tags && post.tags.length > 0 && (
@@ -156,7 +156,7 @@ const ForumPostDetail = () => {
             {post.tags.map((tag, index) => (
               <span
                 key={index}
-                className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded"
+                className="px-2 py-1 bg-slate-100 text-slate-700 text-xs rounded"
               >
                 #{tag}
               </span>
@@ -168,7 +168,7 @@ const ForumPostDetail = () => {
           <div className="flex gap-2 pt-4 border-t">
             <Link
               to={`/forum/${id}/edit`}
-              className="text-indigo-600 hover:text-indigo-700 text-sm"
+              className="text-teal-600 hover:text-teal-700 text-sm"
             >
               Edit
             </Link>
@@ -184,7 +184,7 @@ const ForumPostDetail = () => {
 
       {/* Comments Section */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">
+        <h2 className="text-xl font-bold text-slate-900 mb-4">
           Comments ({post.comments?.length || 0})
         </h2>
 
@@ -195,13 +195,13 @@ const ForumPostDetail = () => {
             onChange={(e) => setCommentContent(e.target.value)}
             placeholder="Write a comment..."
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-2"
+            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 mb-2"
             required
           />
           <button
             type="submit"
             disabled={submittingComment || !commentContent.trim()}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submittingComment ? 'Posting...' : 'Post Comment'}
           </button>
@@ -211,7 +211,7 @@ const ForumPostDetail = () => {
         <div className="space-y-4">
           {post.comments && post.comments.length > 0 ? (
             post.comments.map((comment) => (
-              <div key={comment.id} className="border-l-4 border-indigo-200 pl-4 py-2">
+              <div key={comment.id} className="border-l-4 border-teal-200 pl-4 py-2">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
@@ -222,14 +222,14 @@ const ForumPostDetail = () => {
                           className="w-5 h-5 rounded-full"
                         />
                       )}
-                      <span className="font-medium text-gray-900 text-sm">
+                      <span className="font-medium text-slate-900 text-sm">
                         {comment.user?.name || 'Anonymous'}
                       </span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-slate-500">
                         {new Date(comment.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    <p className="text-gray-700 text-sm">{comment.content}</p>
+                    <p className="text-slate-700 text-sm">{comment.content}</p>
                   </div>
                   {comment.userId === user?.id && (
                     <button
@@ -243,7 +243,7 @@ const ForumPostDetail = () => {
               </div>
             ))
           ) : (
-            <p className="text-gray-500 text-center py-4">No comments yet. Be the first to comment!</p>
+            <p className="text-slate-500 text-center py-4">No comments yet. Be the first to comment!</p>
           )}
         </div>
       </div>

@@ -45,8 +45,8 @@ const Forum = () => {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading forum...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
+          <p className="mt-4 text-slate-600">Loading forum...</p>
         </div>
       </div>
     );
@@ -55,10 +55,10 @@ const Forum = () => {
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Community Forum</h1>
+        <h1 className="text-3xl font-bold text-slate-900">Community Forum</h1>
         <Link
           to="/forum/new"
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md transition-colors"
+          className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md transition-colors"
         >
           + New Post
         </Link>
@@ -72,8 +72,8 @@ const Forum = () => {
             onClick={() => setCategory(cat.value)}
             className={`px-4 py-2 rounded-md transition-colors ${
               category === cat.value
-                ? 'bg-indigo-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-teal-600 text-white'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
             }`}
           >
             {cat.label}
@@ -85,7 +85,7 @@ const Forum = () => {
       <div className="space-y-4">
         {posts.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-lg shadow">
-            <p className="text-gray-500">No posts yet. Be the first to post!</p>
+            <p className="text-slate-500">No posts yet. Be the first to post!</p>
           </div>
         ) : (
           posts.map((post) => (
@@ -94,27 +94,27 @@ const Forum = () => {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <Link to={`/forum/${post.id}`}>
-                      <h3 className="text-lg font-semibold text-gray-900 hover:text-indigo-600 transition-colors">
+                      <h3 className="text-lg font-semibold text-slate-900 hover:text-teal-600 transition-colors">
                         {post.title}
                       </h3>
                     </Link>
                     {post.isPinned && <span className="text-yellow-500">📌</span>}
-                    <span className="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs rounded-full">
+                    <span className="px-2 py-1 bg-teal-100 text-teal-700 text-xs rounded-full">
                       {post.category}
                     </span>
                   </div>
                   <Link to={`/forum/${post.id}`} className="block">
-                    <p className="text-gray-600 mb-3 line-clamp-2 hover:text-indigo-600 transition-colors">
+                    <p className="text-slate-600 mb-3 line-clamp-2 hover:text-teal-600 transition-colors">
                       {post.content}
                     </p>
                   </Link>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <div className="flex items-center gap-4 text-sm text-slate-500">
                     <span>By {post.user?.name || 'Anonymous'}</span>
                     <span>•</span>
                     <span>{new Date(post.createdAt).toLocaleDateString()}</span>
                     <Link
                       to={`/forum/${post.id}`}
-                      className="hover:text-indigo-600 transition-colors"
+                      className="hover:text-teal-600 transition-colors"
                     >
                       {post._count?.comments || 0} comments
                     </Link>
@@ -126,7 +126,7 @@ const Forum = () => {
                       {post.tags.map((tag, index) => (
                         <span
                           key={index}
-                          className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded"
+                          className="px-2 py-1 bg-slate-100 text-slate-700 text-xs rounded"
                         >
                           #{tag}
                         </span>
@@ -139,7 +139,7 @@ const Forum = () => {
                   className={`ml-4 p-2 rounded transition-colors ${
                     post.isLiked
                       ? 'text-red-600 hover:bg-red-50'
-                      : 'text-gray-400 hover:bg-gray-50'
+                      : 'text-slate-400 hover:bg-slate-50'
                   }`}
                 >
                   <span className="text-xl">{post.isLiked ? '❤️' : '🤍'}</span>

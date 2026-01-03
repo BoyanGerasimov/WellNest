@@ -29,7 +29,6 @@ const Dashboard = () => {
     try {
       setLoading(true);
       
-      // Get stats for last 30 days
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       const startDate = thirtyDaysAgo.toISOString().split('T')[0];
@@ -60,7 +59,6 @@ const Dashboard = () => {
       setAchievementStats(achievementStatsRes?.data || null);
       setSuggestions(suggestionsRes?.data || null);
 
-      // Check for new achievements
       try {
         await achievementService.checkAchievements();
       } catch (error) {
@@ -77,8 +75,8 @@ const Dashboard = () => {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading dashboard...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
+          <p className="mt-4 text-slate-600">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -90,68 +88,130 @@ const Dashboard = () => {
   const totalWorkouts = workoutStats?.totalWorkouts || 0;
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 tracking-tight">
-          Welcome back, {user?.name?.split(' ')[0] || 'there'}! 👋
-        </h1>
-        <p className="mt-2 text-lg text-gray-600">
-          Here's your fitness overview
-        </p>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900">
+            Welcome back, {user?.name?.split(' ')[0] || 'there'}! 👋
+          </h1>
+          <p className="mt-1.5 text-slate-600">
+            Here's your fitness overview for the last 30 days
+          </p>
+        </div>
+        <div className="flex gap-3">
+          <Link
+            to="/workouts/new"
+            className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+          >
+            Log Workout
+          </Link>
+          <Link
+            to="/meals/new"
+            className="px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-lg text-sm font-medium transition-colors shadow-sm"
+          >
+            Log Meal
+          </Link>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm font-medium text-slate-600">Workouts</p>
+            <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
+              <span className="text-xl">💪</span>
+            </div>
+          </div>
+          <p className="text-3xl font-bold text-slate-900">{totalWorkouts}</p>
+          <p className="text-xs text-slate-500 mt-1">Last 30 days</p>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm font-medium text-slate-600">Calories Intake</p>
+            <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+              <span className="text-xl">🍎</span>
+            </div>
+          </div>
+          <p className="text-3xl font-bold text-slate-900">{Math.round(totalCaloriesIntake).toLocaleString()}</p>
+          <p className="text-xs text-slate-500 mt-1">Last 30 days</p>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm font-medium text-slate-600">Calories Burned</p>
+            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+              <span className="text-xl">🔥</span>
+            </div>
+          </div>
+          <p className="text-3xl font-bold text-slate-900">{Math.round(totalCaloriesBurned).toLocaleString()}</p>
+          <p className="text-xs text-slate-500 mt-1">Last 30 days</p>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm font-medium text-slate-600">Net Calories</p>
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <span className="text-xl">📊</span>
+            </div>
+          </div>
+          <p className={`text-3xl font-bold ${netCalories >= 0 ? 'text-slate-900' : 'text-orange-600'}`}>
+            {netCalories >= 0 ? '+' : ''}{Math.round(netCalories).toLocaleString()}
+          </p>
+          <p className="text-xs text-slate-500 mt-1">Intake - Burned</p>
+        </div>
       </div>
 
       {/* Health Score & Achievements */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Health Score */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {healthScore && (
-          <div className="bg-gradient-to-br from-purple-500 to-purple-600 overflow-hidden shadow-lg rounded-xl">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-white">Health Score</h2>
-                <span className="text-3xl">{healthScore.grade}</span>
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-slate-900">Health Score</h2>
+              <span className="text-2xl font-bold text-teal-600">{healthScore.grade}</span>
+            </div>
+            <div className="mb-4">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-slate-600">Overall Score</span>
+                <span className="text-xl font-bold text-slate-900">
+                  {healthScore.totalScore}/{healthScore.maxScore}
+                </span>
               </div>
-              <div className="mb-4">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-purple-100 text-sm">Overall Score</span>
-                  <span className="text-2xl font-bold text-white">
-                    {healthScore.totalScore}/{healthScore.maxScore}
-                  </span>
+              <div className="w-full bg-slate-200 rounded-full h-2.5">
+                <div
+                  className="bg-teal-600 h-2.5 rounded-full transition-all duration-500"
+                  style={{ width: `${healthScore.percentage}%` }}
+                ></div>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {Object.entries(healthScore.factors).slice(0, 4).map(([key, factor]) => (
+                <div key={key} className="bg-slate-50 rounded-lg p-3 border border-slate-200">
+                  <p className="text-xs text-slate-600 mb-1">{factor.label}</p>
+                  <p className="text-sm font-semibold text-slate-900">{factor.score}/{factor.maxScore}</p>
                 </div>
-                <div className="w-full bg-purple-400/30 rounded-full h-3">
-                  <div
-                    className="bg-white h-3 rounded-full transition-all duration-500"
-                    style={{ width: `${healthScore.percentage}%` }}
-                  ></div>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                {Object.entries(healthScore.factors).slice(0, 4).map(([key, factor]) => (
-                  <div key={key} className="bg-white/20 rounded p-2">
-                    <p className="text-purple-100 text-xs">{factor.label}</p>
-                    <p className="text-white font-semibold">{factor.score}/{factor.maxScore}</p>
-                  </div>
-                ))}
-              </div>
+              ))}
             </div>
           </div>
         )}
 
-        {/* Achievements */}
         {achievementStats && (
-          <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Achievements</h2>
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">Achievements</h2>
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div className="text-center">
-                <p className="text-3xl font-bold text-indigo-600">{achievementStats.totalAchievements}</p>
-                <p className="text-sm text-gray-500">Unlocked</p>
+                <p className="text-2xl font-bold text-teal-600">{achievementStats.totalAchievements}</p>
+                <p className="text-xs text-slate-500 mt-1">Unlocked</p>
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold text-yellow-600">{achievementStats.totalPoints}</p>
-                <p className="text-sm text-gray-500">Points</p>
+                <p className="text-2xl font-bold text-amber-600">{achievementStats.totalPoints}</p>
+                <p className="text-xs text-slate-500 mt-1">Points</p>
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold text-red-600">{achievementStats.currentStreak}</p>
-                <p className="text-sm text-gray-500">Day Streak</p>
+                <p className="text-2xl font-bold text-orange-600">{achievementStats.currentStreak}</p>
+                <p className="text-xs text-slate-500 mt-1">Day Streak</p>
               </div>
             </div>
             {achievementStats.achievements && achievementStats.achievements.length > 0 && (
@@ -159,16 +219,16 @@ const Dashboard = () => {
                 {achievementStats.achievements.slice(0, 5).map((achievement) => (
                   <div
                     key={achievement.id}
-                    className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2"
+                    className="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-1.5 border border-slate-200"
                     title={achievement.description}
                   >
-                    <span className="text-xl">{achievement.icon}</span>
-                    <span className="text-sm font-medium text-gray-700">{achievement.title}</span>
+                    <span className="text-lg">{achievement.icon}</span>
+                    <span className="text-xs font-medium text-slate-700">{achievement.title}</span>
                   </div>
                 ))}
                 {achievementStats.achievements.length > 5 && (
-                  <div className="flex items-center justify-center bg-gray-50 rounded-lg px-3 py-2">
-                    <span className="text-sm text-gray-500">
+                  <div className="flex items-center justify-center bg-slate-50 rounded-lg px-3 py-1.5 border border-slate-200">
+                    <span className="text-xs text-slate-500">
                       +{achievementStats.achievements.length - 5} more
                     </span>
                   </div>
@@ -179,259 +239,154 @@ const Dashboard = () => {
         )}
       </div>
 
-      {/* Suggestions */}
-      {suggestions && suggestions.all && suggestions.all.length > 0 && (
-        <div className="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-100">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">💡 Suggestions for You</h2>
-          <div className="space-y-3">
-            {suggestions.all.slice(0, 3).map((suggestion, index) => (
-              <div
-                key={index}
-                className={`p-4 rounded-lg border-l-4 ${
-                  suggestion.priority === 'high'
-                    ? 'bg-red-50 border-red-500'
-                    : suggestion.priority === 'medium'
-                    ? 'bg-yellow-50 border-yellow-500'
-                    : 'bg-blue-50 border-blue-500'
-                }`}
-              >
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl">{suggestion.icon}</span>
-                  <div className="flex-1">
-                    <p className="text-gray-900 font-medium">{suggestion.message}</p>
-                    <span
-                      className={`inline-block mt-1 text-xs px-2 py-1 rounded ${
-                        suggestion.priority === 'high'
-                          ? 'bg-red-100 text-red-700'
-                          : suggestion.priority === 'medium'
-                          ? 'bg-yellow-100 text-yellow-700'
-                          : 'bg-blue-100 text-blue-700'
-                      }`}
-                    >
-                      {suggestion.priority} priority
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 overflow-hidden shadow-lg rounded-xl hover:shadow-xl transition-shadow">
-          <div className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-indigo-100 text-sm font-medium uppercase tracking-wide">Workouts</p>
-                <p className="mt-2 text-3xl font-bold text-white">{totalWorkouts}</p>
-                <p className="mt-1 text-indigo-100 text-xs">Last 30 days</p>
-              </div>
-              <div className="bg-white/20 rounded-xl p-3">
-                <span className="text-3xl">💪</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-green-500 to-green-600 overflow-hidden shadow-lg rounded-xl hover:shadow-xl transition-shadow">
-          <div className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-green-100 text-sm font-medium uppercase tracking-wide">Calories Intake</p>
-                <p className="mt-2 text-3xl font-bold text-white">{Math.round(totalCaloriesIntake)}</p>
-                <p className="mt-1 text-green-100 text-xs">Last 30 days</p>
-              </div>
-              <div className="bg-white/20 rounded-xl p-3">
-                <span className="text-3xl">🍎</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-red-500 to-red-600 overflow-hidden shadow-lg rounded-xl hover:shadow-xl transition-shadow">
-          <div className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-red-100 text-sm font-medium uppercase tracking-wide">Calories Burned</p>
-                <p className="mt-2 text-3xl font-bold text-white">{Math.round(totalCaloriesBurned)}</p>
-                <p className="mt-1 text-red-100 text-xs">Last 30 days</p>
-              </div>
-              <div className="bg-white/20 rounded-xl p-3">
-                <span className="text-3xl">🔥</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 overflow-hidden shadow-lg rounded-xl hover:shadow-xl transition-shadow">
-          <div className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-blue-100 text-sm font-medium uppercase tracking-wide">Net Calories</p>
-                <p className={`mt-2 text-3xl font-bold ${netCalories >= 0 ? 'text-white' : 'text-yellow-200'}`}>
-                  {netCalories >= 0 ? '+' : ''}{Math.round(netCalories)}
-                </p>
-                <p className="mt-1 text-blue-100 text-xs">Intake - Burned</p>
-              </div>
-              <div className="bg-white/20 rounded-xl p-3">
-                <span className="text-3xl">📊</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <CalorieChart mealStats={mealStats} workoutStats={workoutStats} />
         <WorkoutFrequencyChart workouts={workoutStats?.workouts || []} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <WeightChart user={user} />
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Total Workout Time</span>
-              <span className="font-semibold text-gray-900">
-                {workoutStats?.totalDuration || 0} min
-              </span>
+      {/* Recent Activity & Suggestions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold text-slate-900">Recent Workouts</h2>
+              <Link to="/workouts" className="text-sm text-teal-600 hover:text-teal-700 font-medium">
+                View all →
+              </Link>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Total Meals Logged</span>
-              <span className="font-semibold text-gray-900">
-                {mealStats?.totalMeals || 0}
-              </span>
+            {recentWorkouts.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-slate-500 text-sm">No workouts yet</p>
+                <Link
+                  to="/workouts/new"
+                  className="mt-2 inline-block text-sm text-teal-600 hover:text-teal-700 font-medium"
+                >
+                  Log your first workout
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {recentWorkouts.map((workout) => (
+                  <div key={workout.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors">
+                    <div>
+                      <p className="font-medium text-slate-900 text-sm">{workout.name}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        {new Date(workout.date).toLocaleDateString()} • {workout.caloriesBurned} cal
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold text-slate-900">Recent Meals</h2>
+              <Link to="/meals" className="text-sm text-teal-600 hover:text-teal-700 font-medium">
+                View all →
+              </Link>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Avg Daily Calories</span>
-              <span className="font-semibold text-gray-900">
-                {mealStats?.totalMeals > 0 
-                  ? Math.round(totalCaloriesIntake / Math.min(mealStats.totalMeals, 30))
-                  : 0}
-              </span>
-            </div>
-            {user?.dailyCalorieGoal && (
-              <div className="flex justify-between items-center pt-4 border-t">
-                <span className="text-gray-600">Daily Goal</span>
-                <span className="font-semibold text-gray-900">
-                  {user.dailyCalorieGoal} cal
-                </span>
+            {recentMeals.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-slate-500 text-sm">No meals logged yet</p>
+                <Link
+                  to="/meals/new"
+                  className="mt-2 inline-block text-sm text-teal-600 hover:text-teal-700 font-medium"
+                >
+                  Log your first meal
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {recentMeals.map((meal) => (
+                  <div key={meal.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors">
+                    <div>
+                      <p className="font-medium text-slate-900 text-sm">{meal.name}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        {new Date(meal.date).toLocaleDateString()} • {Math.round(meal.totalCalories)} cal
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
         </div>
-      </div>
 
-      {/* Quick Actions */}
-      <div className="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-100">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Link
-            to="/workouts/new"
-            className="group bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white px-6 py-3 rounded-lg text-sm font-semibold shadow-md hover:shadow-lg transition-all transform hover:scale-105 active:scale-95 text-center"
-          >
-            <span className="flex items-center justify-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              Log Workout
-            </span>
-          </Link>
-          <Link
-            to="/meals/new"
-            className="group bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-6 py-3 rounded-lg text-sm font-semibold shadow-md hover:shadow-lg transition-all transform hover:scale-105 active:scale-95 text-center"
-          >
-            <span className="flex items-center justify-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              Log Meal
-            </span>
-          </Link>
-          <Link
-            to="/workouts"
-            className="group bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg text-sm font-semibold shadow-md hover:shadow-lg transition-all transform hover:scale-105 active:scale-95 text-center"
-          >
-            <span className="flex items-center justify-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-              View Progress
-            </span>
-          </Link>
-        </div>
-      </div>
-
-      {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Recent Workouts</h2>
-            <Link to="/workouts" className="text-indigo-600 hover:text-indigo-700 text-sm">
-              View all →
-            </Link>
-          </div>
-          {recentWorkouts.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-500">No workouts yet</p>
-              <Link
-                to="/workouts/new"
-                className="mt-2 inline-block text-indigo-600 hover:text-indigo-700 text-sm"
-              >
-                Log your first workout
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {recentWorkouts.map((workout) => (
-                <div key={workout.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-900">{workout.name}</p>
-                    <p className="text-sm text-gray-500">
-                      {new Date(workout.date).toLocaleDateString()} • {workout.caloriesBurned} cal
-                    </p>
+        <div className="space-y-6">
+          {suggestions && suggestions.all && suggestions.all.length > 0 && (
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">💡 Suggestions</h2>
+              <div className="space-y-3">
+                {suggestions.all.slice(0, 3).map((suggestion, index) => (
+                  <div
+                    key={index}
+                    className={`p-3 rounded-lg border-l-4 ${
+                      suggestion.priority === 'high'
+                        ? 'bg-orange-50 border-orange-500'
+                        : suggestion.priority === 'medium'
+                        ? 'bg-amber-50 border-amber-500'
+                        : 'bg-teal-50 border-teal-500'
+                    }`}
+                  >
+                    <div className="flex items-start gap-2">
+                      <span className="text-lg">{suggestion.icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-900">{suggestion.message}</p>
+                        <span
+                          className={`inline-block mt-1 text-xs px-2 py-0.5 rounded ${
+                            suggestion.priority === 'high'
+                              ? 'bg-orange-100 text-orange-700'
+                              : suggestion.priority === 'medium'
+                              ? 'bg-amber-100 text-amber-700'
+                              : 'bg-teal-100 text-teal-700'
+                          }`}
+                        >
+                          {suggestion.priority}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           )}
-        </div>
 
-        <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Recent Meals</h2>
-            <Link to="/meals" className="text-indigo-600 hover:text-indigo-700 text-sm">
-              View all →
-            </Link>
-          </div>
-          {recentMeals.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-500">No meals logged yet</p>
-              <Link
-                to="/meals/new"
-                className="mt-2 inline-block text-indigo-600 hover:text-indigo-700 text-sm"
-              >
-                Log your first meal
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {recentMeals.map((meal) => (
-                <div key={meal.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-900">{meal.name}</p>
-                    <p className="text-sm text-gray-500">
-                      {new Date(meal.date).toLocaleDateString()} • {Math.round(meal.totalCalories)} cal
-                    </p>
-                  </div>
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <h3 className="text-lg font-semibold text-slate-900 mb-4">Quick Stats</h3>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-slate-600">Total Workout Time</span>
+                <span className="text-sm font-semibold text-slate-900">
+                  {workoutStats?.totalDuration || 0} min
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-slate-600">Total Meals Logged</span>
+                <span className="text-sm font-semibold text-slate-900">
+                  {mealStats?.totalMeals || 0}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-slate-600">Avg Daily Calories</span>
+                <span className="text-sm font-semibold text-slate-900">
+                  {mealStats?.totalMeals > 0 
+                    ? Math.round(totalCaloriesIntake / Math.min(mealStats.totalMeals, 30))
+                    : 0}
+                </span>
+              </div>
+              {user?.dailyCalorieGoal && (
+                <div className="flex justify-between items-center pt-4 border-t border-slate-200">
+                  <span className="text-sm text-slate-600">Daily Goal</span>
+                  <span className="text-sm font-semibold text-slate-900">
+                    {user.dailyCalorieGoal} cal
+                  </span>
                 </div>
-              ))}
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>
