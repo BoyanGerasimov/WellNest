@@ -7,18 +7,29 @@ const Navigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const mobileMenuRef = useRef(null);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // Check if click is on the hamburger button
+      const hamburgerButton = event.target.closest('button[aria-label="Toggle menu"]');
+      if (hamburgerButton) {
+        return; // Don't close if clicking the hamburger button itself
+      }
+
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setProfileDropdownOpen(false);
+      }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+        setMobileMenuOpen(false);
       }
     };
 
@@ -41,12 +52,12 @@ const Navigation = () => {
             <div className="h-9 w-9 bg-teal-600 rounded-xl flex items-center justify-center mr-3 group-hover:scale-110 transition-transform shadow-md">
               <span className="text-xl font-bold text-white">W</span>
             </div>
-            <span className="text-2xl font-bold text-slate-900">
+            <span className="text-xl sm:text-2xl font-bold text-slate-900">
               WellNest
             </span>
           </Link>
 
-          {/* Navigation Links */}
+          {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center space-x-1 flex-1 justify-center">
             <Link
               to="/dashboard"
@@ -120,8 +131,33 @@ const Navigation = () => {
             </Link>
           </div>
 
-          {/* Profile Dropdown */}
-          <div className="relative" ref={dropdownRef}>
+          {/* Mobile Menu Button & Profile */}
+          <div className="flex items-center gap-3">
+            {/* Mobile Menu Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setMobileMenuOpen(!mobileMenuOpen);
+              }}
+              className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors"
+              aria-label="Toggle menu"
+            >
+              <svg
+                className="w-6 h-6 text-slate-700"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                {mobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+
+            {/* Profile Dropdown */}
+            <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
               onMouseEnter={() => setProfileDropdownOpen(true)}
@@ -167,7 +203,123 @@ const Navigation = () => {
               </div>
             )}
           </div>
+          </div>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div
+            ref={mobileMenuRef}
+            className="md:hidden border-t border-slate-200 bg-white"
+          >
+            <div className="px-4 py-3 space-y-1">
+              <Link
+                to="/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  isActive('/dashboard')
+                    ? 'bg-teal-100 text-teal-700'
+                    : 'text-slate-700 hover:bg-teal-50 hover:text-teal-600'
+                }`}
+              >
+                Dashboard
+              </Link>
+              <Link
+                to="/workouts"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  isActive('/workouts')
+                    ? 'bg-teal-100 text-teal-700'
+                    : 'text-slate-700 hover:bg-teal-50 hover:text-teal-600'
+                }`}
+              >
+                Workouts
+              </Link>
+              <Link
+                to="/meals"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  isActive('/meals')
+                    ? 'bg-teal-100 text-teal-700'
+                    : 'text-slate-700 hover:bg-teal-50 hover:text-teal-600'
+                }`}
+              >
+                Meals
+              </Link>
+              <Link
+                to="/forum"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  isActive('/forum')
+                    ? 'bg-teal-100 text-teal-700'
+                    : 'text-slate-700 hover:bg-teal-50 hover:text-teal-600'
+                }`}
+              >
+                Forum
+              </Link>
+              <Link
+                to="/suggestions"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  isActive('/suggestions')
+                    ? 'bg-teal-100 text-teal-700'
+                    : 'text-slate-700 hover:bg-teal-50 hover:text-teal-600'
+                }`}
+              >
+                Suggestions
+              </Link>
+              <Link
+                to="/analytics"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  isActive('/analytics')
+                    ? 'bg-teal-100 text-teal-700'
+                    : 'text-slate-700 hover:bg-teal-50 hover:text-teal-600'
+                }`}
+              >
+                Analytics
+              </Link>
+              <Link
+                to="/achievements"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  isActive('/achievements')
+                    ? 'bg-teal-100 text-teal-700'
+                    : 'text-slate-700 hover:bg-teal-50 hover:text-teal-600'
+                }`}
+              >
+                Achievements
+              </Link>
+              <div className="border-t border-slate-200 pt-2 mt-2">
+                <Link
+                  to="/profile"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setProfileDropdownOpen(false);
+                  }}
+                  className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-teal-50 hover:text-teal-700 transition-colors rounded-lg"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  Profile
+                </Link>
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors rounded-lg text-left"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );

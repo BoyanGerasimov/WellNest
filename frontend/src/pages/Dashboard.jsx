@@ -88,27 +88,27 @@ const Dashboard = () => {
   const totalWorkouts = workoutStats?.totalWorkouts || 0;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8 px-4 sm:px-0">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
             Welcome back, {user?.name?.split(' ')[0] || 'there'}! 👋
           </h1>
-          <p className="mt-1.5 text-slate-600">
+          <p className="mt-1.5 text-sm sm:text-base text-slate-600">
             Here's your fitness overview for the last 30 days
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2 sm:gap-3">
           <Link
             to="/workouts/new"
-            className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+            className="flex-1 sm:flex-none px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm text-center"
           >
             Log Workout
           </Link>
           <Link
             to="/meals/new"
-            className="px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-lg text-sm font-medium transition-colors shadow-sm"
+            className="flex-1 sm:flex-none px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-lg text-sm font-medium transition-colors shadow-sm text-center"
           >
             Log Meal
           </Link>
@@ -117,47 +117,47 @@ const Dashboard = () => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-slate-600">Workouts</p>
             <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
               <span className="text-xl">💪</span>
             </div>
           </div>
-          <p className="text-3xl font-bold text-slate-900">{totalWorkouts}</p>
+          <p className="text-2xl sm:text-3xl font-bold text-slate-900">{totalWorkouts}</p>
           <p className="text-xs text-slate-500 mt-1">Last 30 days</p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-slate-600">Calories Intake</p>
             <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
               <span className="text-xl">🍎</span>
             </div>
           </div>
-          <p className="text-3xl font-bold text-slate-900">{Math.round(totalCaloriesIntake).toLocaleString()}</p>
+          <p className="text-2xl sm:text-3xl font-bold text-slate-900">{Math.round(totalCaloriesIntake).toLocaleString()}</p>
           <p className="text-xs text-slate-500 mt-1">Last 30 days</p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-slate-600">Calories Burned</p>
             <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
               <span className="text-xl">🔥</span>
             </div>
           </div>
-          <p className="text-3xl font-bold text-slate-900">{Math.round(totalCaloriesBurned).toLocaleString()}</p>
+          <p className="text-2xl sm:text-3xl font-bold text-slate-900">{Math.round(totalCaloriesBurned).toLocaleString()}</p>
           <p className="text-xs text-slate-500 mt-1">Last 30 days</p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-slate-600">Net Calories</p>
             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
               <span className="text-xl">📊</span>
             </div>
           </div>
-          <p className={`text-3xl font-bold ${netCalories >= 0 ? 'text-slate-900' : 'text-orange-600'}`}>
+          <p className={`text-2xl sm:text-3xl font-bold ${netCalories >= 0 ? 'text-slate-900' : 'text-orange-600'}`}>
             {netCalories >= 0 ? '+' : ''}{Math.round(netCalories).toLocaleString()}
           </p>
           <p className="text-xs text-slate-500 mt-1">Intake - Burned</p>
@@ -165,12 +165,12 @@ const Dashboard = () => {
       </div>
 
       {/* Health Score & Achievements */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {healthScore && (
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-slate-900">Health Score</h2>
-              <span className="text-2xl font-bold text-teal-600">{healthScore.grade}</span>
+              <h2 className="text-base sm:text-lg font-semibold text-slate-900">Health Score</h2>
+              <span className="text-xl sm:text-2xl font-bold text-teal-600">{healthScore.grade}</span>
             </div>
             <div className="mb-4">
               <div className="flex justify-between items-center mb-2">
@@ -198,8 +198,8 @@ const Dashboard = () => {
         )}
 
         {achievementStats && (
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h2 className="text-lg font-semibold text-slate-900 mb-4">Achievements</h2>
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">Achievements</h2>
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div className="text-center">
                 <p className="text-2xl font-bold text-teal-600">{achievementStats.totalAchievements}</p>
@@ -240,18 +240,18 @@ const Dashboard = () => {
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <CalorieChart mealStats={mealStats} workoutStats={workoutStats} />
         <WorkoutFrequencyChart workouts={workoutStats?.workouts || []} />
       </div>
 
       {/* Recent Activity & Suggestions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold text-slate-900">Recent Workouts</h2>
-              <Link to="/workouts" className="text-sm text-teal-600 hover:text-teal-700 font-medium">
+              <h2 className="text-base sm:text-lg font-semibold text-slate-900">Recent Workouts</h2>
+              <Link to="/workouts" className="text-xs sm:text-sm text-teal-600 hover:text-teal-700 font-medium">
                 View all →
               </Link>
             </div>
@@ -269,8 +269,8 @@ const Dashboard = () => {
               <div className="space-y-2">
                 {recentWorkouts.map((workout) => (
                   <div key={workout.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors">
-                    <div>
-                      <p className="font-medium text-slate-900 text-sm">{workout.name}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-slate-900 text-sm truncate">{workout.name}</p>
                       <p className="text-xs text-slate-500 mt-0.5">
                         {new Date(workout.date).toLocaleDateString()} • {workout.caloriesBurned} cal
                       </p>
@@ -281,10 +281,10 @@ const Dashboard = () => {
             )}
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold text-slate-900">Recent Meals</h2>
-              <Link to="/meals" className="text-sm text-teal-600 hover:text-teal-700 font-medium">
+              <h2 className="text-base sm:text-lg font-semibold text-slate-900">Recent Meals</h2>
+              <Link to="/meals" className="text-xs sm:text-sm text-teal-600 hover:text-teal-700 font-medium">
                 View all →
               </Link>
             </div>
@@ -302,8 +302,8 @@ const Dashboard = () => {
               <div className="space-y-2">
                 {recentMeals.map((meal) => (
                   <div key={meal.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors">
-                    <div>
-                      <p className="font-medium text-slate-900 text-sm">{meal.name}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-slate-900 text-sm truncate">{meal.name}</p>
                       <p className="text-xs text-slate-500 mt-0.5">
                         {new Date(meal.date).toLocaleDateString()} • {Math.round(meal.totalCalories)} cal
                       </p>
@@ -315,10 +315,10 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {suggestions && suggestions.all && suggestions.all.length > 0 && (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">💡 Suggestions</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
+              <h2 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">💡 Suggestions</h2>
               <div className="space-y-3">
                 {suggestions.all.slice(0, 3).map((suggestion, index) => (
                   <div
@@ -354,8 +354,8 @@ const Dashboard = () => {
             </div>
           )}
 
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h3 className="text-lg font-semibold text-slate-900 mb-4">Quick Stats</h3>
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">Quick Stats</h3>
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-slate-600">Total Workout Time</span>
