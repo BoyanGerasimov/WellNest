@@ -1,7 +1,9 @@
 const { PrismaClient } = require('@prisma/client');
 const { validationResult } = require('express-validator');
 const nutritionService = require('../services/nutritionService');
+const barcodeService = require('../services/barcodeService');
 const achievementService = require('../services/achievementService');
+const openaiService = require('../services/openaiService');
 
 // Use a single PrismaClient instance (lazy initialization)
 let prisma;
@@ -297,6 +299,31 @@ exports.getNutrition = async (req, res, next) => {
   }
 };
 
+// @desc    Lookup product by barcode
+// @route   POST /api/meals/barcode
+// @access  Private
+exports.lookupBarcode = async (req, res, next) => {
+  try {
+    const { barcode } = req.body;
+
+    if (!barcode || typeof barcode !== 'string' || barcode.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Barcode is required'
+      });
+    }
+
+    const product = await barcodeService.lookupBarcode(barcode.trim());
+    
+    res.status(200).json({
+      success: true,
+      data: product
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // @desc    Get meal statistics
 // @route   GET /api/meals/stats
 // @access  Private
@@ -355,6 +382,29 @@ exports.getMealStats = async (req, res, next) => {
         totalFats: totalFats._sum.totalFats || 0,
         meals
       }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Scan meal image and identify meal with nutrition
+// @route   POST /api/meals/scan
+// @access  Private
+exports.scanMeal = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'Image file is required'
+      });
+    }
+
+    const mealData = await openaiService.analyzeMealImage(req.file.buffer);
+
+    res.status(200).json({
+      success: true,
+      data: mealData
     });
   } catch (error) {
     next(error);

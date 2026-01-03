@@ -18,7 +18,6 @@ import Achievements from './pages/Achievements';
 import Suggestions from './pages/Suggestions';
 import ChatCoach from './pages/ChatCoach';
 import Analytics from './pages/Analytics';
-import RecipeScanner from './pages/RecipeScanner';
 
 function App() {
   return (
@@ -47,7 +46,6 @@ function App() {
             <Route path="/suggestions" element={<Suggestions />} />
             <Route path="/chat" element={<ChatCoach />} />
             <Route path="/analytics" element={<Analytics />} />
-            <Route path="/recipes" element={<RecipeScanner />} />
           </Route>
         </Route>
 

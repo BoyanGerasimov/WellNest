@@ -264,15 +264,6 @@ try {
   throw error;
 }
 
-try {
-  console.log('  → Loading recipe routes...');
-  app.use('/api/recipes', require('./routes/recipes'));
-  console.log('✅ Recipe routes loaded');
-} catch (error) {
-  console.error('❌ Error loading recipe routes:', error.message);
-  console.error('Stack:', error.stack);
-  throw error;
-}
 
 // 404 handler
 app.use((req, res) => {

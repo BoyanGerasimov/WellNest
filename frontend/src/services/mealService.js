@@ -51,6 +51,19 @@ export const mealService = {
   getMealStats: async (params = {}) => {
     const response = await api.get('/meals/stats', { params });
     return response.data;
+  },
+
+  // Scan meal image using AI
+  scanMeal: async (imageFile) => {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    
+    const response = await api.post('/meals/scan', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
   }
 };
 

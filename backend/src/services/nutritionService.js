@@ -48,18 +48,62 @@ class NutritionService {
       }
 
       const response = await this.client.get('/foods/search', { params });
-      
+
       // Transform USDA response to a simpler, consistent format
-      return {
-        foods: (response.data.foods || []).map(food => ({
+      let foods = (response.data.foods || []).map(food => {
+        // Extract nutrients from search result if available
+        const nutrients = this._extractNutrients(food.foodNutrients || []);
+        
+        return {
           fdcId: food.fdcId,
           description: food.description,
           brandOwner: food.brandOwner || null,
           dataType: food.dataType,
-          nutrients: this._extractNutrients(food.foodNutrients || []),
+          nutrients: nutrients.calories > 0 ? nutrients : null, // Only include if we have data
           servingSize: food.servingSize || 100,
           servingSizeUnit: food.servingSizeUnit || 'g'
-        })),
+        };
+      });
+
+      // If no nutrients in search results, fetch calories for top results (max 10)
+      // This helps users see calories before selecting
+      const foodsWithoutCalories = foods.filter(f => !f.nutrients || f.nutrients.calories === 0);
+      if (foodsWithoutCalories.length > 0 && foodsWithoutCalories.length <= 10) {
+        try {
+          // Fetch calories for foods without nutrient data
+          const caloriePromises = foodsWithoutCalories.map(async (food) => {
+            try {
+              const nutritionData = await this.getNutritionData(food.fdcId, [208]); // Only fetch calories
+              return {
+                ...food,
+                nutrients: {
+                  calories: nutritionData.nutrients.calories || 0,
+                  protein: 0,
+                  carbs: 0,
+                  fat: 0
+                }
+              };
+            } catch (error) {
+              // If fetch fails, return food as-is
+              return food;
+            }
+          });
+
+          const foodsWithCalories = await Promise.all(caloriePromises);
+          
+          // Update the foods array with calorie data
+          foods = foods.map(food => {
+            const updated = foodsWithCalories.find(f => f.fdcId === food.fdcId);
+            return updated || food;
+          });
+        } catch (error) {
+          console.warn('Failed to fetch calories for search results:', error.message);
+          // Continue with foods without calories
+        }
+      }
+
+      return {
+        foods,
         totalHits: response.data.totalHits || 0,
         currentPage: response.data.currentPage || pageNumber,
         totalPages: response.data.totalPages || 1
@@ -124,6 +168,9 @@ class NutritionService {
 
       const response = await this.client.get(`/food/${fdcId}`, { params });
       
+      // Extract food portions (household servings like "1 medium banana", "1 cup")
+      const foodPortions = this._extractFoodPortions(response.data.foodPortions || []);
+      
       return {
         fdcId: response.data.fdcId,
         description: response.data.description,
@@ -132,6 +179,7 @@ class NutritionService {
         nutrients: this._extractNutrients(response.data.foodNutrients || []),
         servingSize: response.data.servingSize || 100,
         servingSizeUnit: response.data.servingSizeUnit || 'g',
+        foodPortions: foodPortions, // User-friendly portions like "1 medium banana"
         publicationDate: response.data.publicationDate || null
       };
     } catch (error) {
@@ -216,6 +264,33 @@ class NutritionService {
     });
 
     return nutrients;
+  }
+
+  /**
+   * Extract food portions from USDA response
+   * @private
+   * @param {Array} foodPortions - Array of food portion objects from USDA API
+   * @returns {Array} Formatted food portions with user-friendly descriptions
+   */
+  _extractFoodPortions(foodPortions) {
+    if (!Array.isArray(foodPortions) || foodPortions.length === 0) {
+      return [];
+    }
+
+    return foodPortions
+      .filter(portion => portion.amount && portion.modifier && portion.gramWeight)
+      .map(portion => ({
+        amount: portion.amount,
+        modifier: portion.modifier, // e.g., "medium", "large", "cup", "tablespoon"
+        gramWeight: portion.gramWeight,
+        // Create user-friendly description like "1 medium banana" or "1 cup"
+        description: `${portion.amount} ${portion.modifier}`.trim()
+      }))
+      .sort((a, b) => {
+        // Sort by amount, then by gram weight
+        if (a.amount !== b.amount) return a.amount - b.amount;
+        return a.gramWeight - b.gramWeight;
+      });
   }
 }
 

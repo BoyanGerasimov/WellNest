@@ -67,12 +67,6 @@ const Navigation = () => {
                 Analytics
               </Link>
               <Link
-                to="/recipes"
-                className="text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
-              >
-                Recipe Scanner
-              </Link>
-              <Link
                 to="/achievements"
                 className="text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
               >
