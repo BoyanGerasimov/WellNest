@@ -11,30 +11,45 @@ const path = require('path');
 console.log('🔄 Running database migrations...');
 console.log(`   Working directory: ${path.join(__dirname, '..')}`);
 console.log(`   DATABASE_URL: ${process.env.DATABASE_URL ? 'Set' : 'NOT SET'}`);
+console.log(`   DIRECT_URL: ${process.env.DIRECT_URL ? 'Set' : 'NOT SET'}`);
+
+if (!process.env.DATABASE_URL) {
+  console.error('❌ DATABASE_URL is not set! Cannot run migrations.');
+  process.exit(1);
+}
 
 try {
   // Run migrations with explicit error handling
   console.log('   Executing: npx prisma migrate deploy');
-  execSync('npx prisma migrate deploy', {
-    stdio: 'inherit',
+  const migrateOutput = execSync('npx prisma migrate deploy', {
+    stdio: 'pipe',
     cwd: path.join(__dirname, '..'),
-    env: process.env
+    env: process.env,
+    encoding: 'utf8'
   });
-  
+  console.log(migrateOutput);
   console.log('✅ Migrations completed successfully');
   
   // Seed test user if it doesn't exist
   console.log('🌱 Checking for test user...');
   try {
-    execSync('npm run seed:test', {
-      stdio: 'inherit',
+    const seedOutput = execSync('npm run seed:test', {
+      stdio: 'pipe',
       cwd: path.join(__dirname, '..'),
-      env: process.env
+      env: process.env,
+      encoding: 'utf8'
     });
+    console.log(seedOutput);
     console.log('✅ Test user check completed');
   } catch (seedError) {
-    // Seed script will create or update test user, so errors are okay if user exists
-    console.log('ℹ️  Test user already exists or seed completed');
+    // Check if it's because user already exists (exit code 0) or actual error
+    if (seedError.status === 0 || seedError.message.includes('already exists')) {
+      console.log('ℹ️  Test user already exists, skipping seed');
+    } else {
+      console.error('⚠️  Seed script error (non-fatal):', seedError.message);
+      if (seedError.stdout) console.log('   Stdout:', seedError.stdout);
+      if (seedError.stderr) console.log('   Stderr:', seedError.stderr);
+    }
   }
   
   console.log('🚀 Starting server...');
