@@ -76,49 +76,29 @@ async function seedTestAccount() {
     });
 
     if (user) {
-      console.log('✅ Test user already exists, updating profile...');
-      // Delete existing data
-      await prisma.workout.deleteMany({ where: { userId: user.id } });
-      await prisma.meal.deleteMany({ where: { userId: user.id } });
-      await prisma.achievement.deleteMany({ where: { userId: user.id } });
-      await prisma.forumPost.deleteMany({ where: { userId: user.id } });
-      await prisma.chatMessage.deleteMany({ where: { userId: user.id } });
-      
-      // Update user profile
-      const hashedPassword = await bcrypt.hash(TEST_PASSWORD, 10);
-      user = await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          password: hashedPassword,
-          name: 'Test User',
-          dateOfBirth: new Date('1995-05-15'),
-          gender: 'male',
-          height: 175,
-          currentWeight: 75,
-          goalWeight: 70,
-          activityLevel: 'moderately_active',
-          dailyCalorieGoal: 2200
-        }
-      });
-    } else {
-      console.log('📝 Creating new test user...');
-      const hashedPassword = await bcrypt.hash(TEST_PASSWORD, 10);
-      user = await prisma.user.create({
-        data: {
-          name: 'Test User',
-          email: TEST_EMAIL,
-          password: hashedPassword,
-          dateOfBirth: new Date('1995-05-15'),
-          gender: 'male',
-          height: 175,
-          currentWeight: 75,
-          goalWeight: 70,
-          activityLevel: 'moderately_active',
-          dailyCalorieGoal: 2200,
-          isEmailVerified: true
-        }
-      });
+      console.log('✅ Test user already exists, skipping seed (to avoid duplicate data)');
+      console.log('   If you want to reseed, delete the user first or modify this script');
+      return;
     }
+
+    console.log('📝 Creating new test user...');
+      
+    const hashedPassword = await bcrypt.hash(TEST_PASSWORD, 10);
+    user = await prisma.user.create({
+      data: {
+        name: 'Test User',
+        email: TEST_EMAIL,
+        password: hashedPassword,
+        dateOfBirth: new Date('1995-05-15'),
+        gender: 'male',
+        height: 175,
+        currentWeight: 75,
+        goalWeight: 70,
+        activityLevel: 'moderately_active',
+        dailyCalorieGoal: 2200,
+        isEmailVerified: true
+      }
+    });
     console.log(`✅ User created/updated: ${user.email}\n`);
 
     // 2. Create workouts (past 30 days)

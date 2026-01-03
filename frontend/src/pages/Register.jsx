@@ -54,7 +54,10 @@ const Register = () => {
   };
 
   const handleOAuth = (provider) => {
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+    // VITE_API_URL should be the full backend URL including /api
+    // e.g., https://your-backend.railway.app/api
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    // API_URL already includes /api, so we just append the OAuth path
     window.location.href = `${API_URL}/auth/oauth/${provider}`;
   };
 

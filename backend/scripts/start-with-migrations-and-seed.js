@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Start script that runs migrations before starting the server
- * This ensures migrations are always up-to-date on Railway deployments
+ * Start script that runs migrations and seeds test user before starting the server
+ * This ensures migrations and test data are always up-to-date on Railway deployments
  */
 
 const { execSync } = require('child_process');
@@ -22,6 +22,21 @@ try {
   });
   
   console.log('✅ Migrations completed successfully');
+  
+  // Seed test user if it doesn't exist
+  console.log('🌱 Checking for test user...');
+  try {
+    execSync('npm run seed:test', {
+      stdio: 'inherit',
+      cwd: path.join(__dirname, '..'),
+      env: process.env
+    });
+    console.log('✅ Test user check completed');
+  } catch (seedError) {
+    // Seed script will create or update test user, so errors are okay if user exists
+    console.log('ℹ️  Test user already exists or seed completed');
+  }
+  
   console.log('🚀 Starting server...');
   
   // Start the server

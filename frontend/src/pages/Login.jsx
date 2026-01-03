@@ -1,8 +1,9 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
+  const [searchParams] = useSearchParams();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -11,6 +12,15 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  // Check for OAuth error in URL
+  useEffect(() => {
+    const oauthError = searchParams.get('error');
+    const errorMessage = searchParams.get('message');
+    if (oauthError === 'oauth_failed') {
+      setError(errorMessage || 'Google authentication failed. Please try again.');
+    }
+  }, [searchParams]);
 
   const handleChange = (e) => {
     setFormData({
@@ -36,7 +46,10 @@ const Login = () => {
   };
 
   const handleOAuth = (provider) => {
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+    // VITE_API_URL should be the full backend URL including /api
+    // e.g., https://your-backend.railway.app/api
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    // API_URL already includes /api, so we just append the OAuth path
     window.location.href = `${API_URL}/auth/oauth/${provider}`;
   };
 

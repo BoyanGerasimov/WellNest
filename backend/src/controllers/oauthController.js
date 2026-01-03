@@ -98,9 +98,13 @@ exports.googleCallback = async (req, res, next) => {
     const token = generateToken(user.id);
 
     // Redirect to frontend with token
-    res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${token}`);
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    res.redirect(`${frontendUrl}/auth/callback?token=${token}`);
   } catch (error) {
-    next(error);
+    console.error('OAuth callback error:', error);
+    // Redirect to frontend login with error
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    res.redirect(`${frontendUrl}/login?error=oauth_failed&message=${encodeURIComponent(error.message || 'Authentication failed')}`);
   }
 };
 
