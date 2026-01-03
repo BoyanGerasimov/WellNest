@@ -21,6 +21,21 @@ if (!process.env.JWT_SECRET) {
 
 console.log('✅ Dependencies loaded');
 
+// Initialize Google Cloud credentials if needed
+if (process.env.GOOGLE_CLOUD_KEY_BASE64 || process.env.GOOGLE_CLOUD_KEY_JSON) {
+  try {
+    const { getGoogleCloudCredentialsPath } = require('./utils/googleCloudCredentials');
+    const credsPath = getGoogleCloudCredentialsPath();
+    if (credsPath) {
+      // Set the path for Google Cloud libraries that expect GOOGLE_APPLICATION_CREDENTIALS
+      process.env.GOOGLE_APPLICATION_CREDENTIALS = credsPath;
+      console.log('✅ Google Cloud credentials initialized');
+    }
+  } catch (error) {
+    console.warn('⚠️  Google Cloud credentials initialization failed:', error.message);
+  }
+}
+
 console.log('📦 Initializing Prisma...');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
