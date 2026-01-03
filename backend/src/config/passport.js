@@ -12,8 +12,33 @@ try {
     if (process.env.GOOGLE_CALLBACK_URL) {
       callbackURL = process.env.GOOGLE_CALLBACK_URL;
     } else if (process.env.BACKEND_URL) {
-      // Ensure BACKEND_URL doesn't have trailing slash
-      const backendUrl = process.env.BACKEND_URL.replace(/\/$/, '');
+      // Ensure BACKEND_URL doesn't have trailing slash and is public URL
+      let backendUrl = process.env.BACKEND_URL.replace(/\/$/, '');
+      
+      // Fix: Replace internal Railway URLs with public URLs
+      // Railway provides RAILWAY_PUBLIC_DOMAIN or we use BACKEND_URL
+      if (backendUrl.includes('railway.internal')) {
+        // If BACKEND_URL is internal, try to get public domain
+        if (process.env.RAILWAY_PUBLIC_DOMAIN) {
+          backendUrl = `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`;
+        } else if (process.env.RAILWAY_STATIC_URL) {
+          backendUrl = process.env.RAILWAY_STATIC_URL;
+        } else {
+          console.error('❌ BACKEND_URL is internal Railway URL but no public domain found!');
+          console.error('   Set BACKEND_URL to your public Railway URL (e.g., https://your-app.railway.app)');
+          console.error('   Or set RAILWAY_PUBLIC_DOMAIN environment variable');
+        }
+      }
+      
+      // Ensure it's https in production
+      if (process.env.NODE_ENV === 'production' && !backendUrl.startsWith('https://')) {
+        if (backendUrl.startsWith('http://')) {
+          backendUrl = backendUrl.replace('http://', 'https://');
+        } else {
+          backendUrl = `https://${backendUrl}`;
+        }
+      }
+      
       callbackURL = `${backendUrl}/api/auth/oauth/google/callback`;
     } else {
       callbackURL = 'http://localhost:5000/api/auth/oauth/google/callback';

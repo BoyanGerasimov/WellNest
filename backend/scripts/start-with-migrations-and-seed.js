@@ -8,6 +8,42 @@
 const { execSync } = require('child_process');
 const path = require('path');
 
+// Helper to run command and show output
+function runCommand(command, description) {
+  console.log(`   ${description}...`);
+  try {
+    execSync(command, {
+      stdio: 'inherit', // Show output in real-time
+      cwd: path.join(__dirname, '..'),
+      env: process.env
+    });
+    return true;
+  } catch (error) {
+    console.error(`   ❌ ${description} failed!`);
+    if (error.stdout) console.error('   Stdout:', error.stdout.toString());
+    if (error.stderr) console.error('   Stderr:', error.stderr.toString());
+    throw error;
+  }
+}
+
+// Helper to run command and show output
+function runCommand(command, description) {
+  console.log(`   ${description}...`);
+  try {
+    execSync(command, {
+      stdio: 'inherit', // Show output in real-time
+      cwd: path.join(__dirname, '..'),
+      env: process.env
+    });
+    return true;
+  } catch (error) {
+    console.error(`   ❌ ${description} failed!`);
+    if (error.stdout) console.error('   Stdout:', error.stdout.toString());
+    if (error.stderr) console.error('   Stderr:', error.stderr.toString());
+    throw error;
+  }
+}
+
 console.log('🔄 Running database migrations...');
 console.log(`   Working directory: ${path.join(__dirname, '..')}`);
 console.log(`   DATABASE_URL: ${process.env.DATABASE_URL ? 'Set' : 'NOT SET'}`);
@@ -19,37 +55,20 @@ if (!process.env.DATABASE_URL) {
 }
 
 try {
-  // Run migrations with explicit error handling
+  // Run migrations - CRITICAL: Must succeed or server won't start
   console.log('   Executing: npx prisma migrate deploy');
-  const migrateOutput = execSync('npx prisma migrate deploy', {
-    stdio: 'pipe',
-    cwd: path.join(__dirname, '..'),
-    env: process.env,
-    encoding: 'utf8'
-  });
-  console.log(migrateOutput);
+  console.log('   This may take a moment...');
+  runCommand('npx prisma migrate deploy', 'Running migrations');
   console.log('✅ Migrations completed successfully');
   
-  // Seed test user if it doesn't exist
+  // Seed test user (non-critical - can fail if user exists)
   console.log('🌱 Checking for test user...');
   try {
-    const seedOutput = execSync('npm run seed:test', {
-      stdio: 'pipe',
-      cwd: path.join(__dirname, '..'),
-      env: process.env,
-      encoding: 'utf8'
-    });
-    console.log(seedOutput);
+    runCommand('npm run seed:test', 'Seeding test user');
     console.log('✅ Test user check completed');
   } catch (seedError) {
-    // Check if it's because user already exists (exit code 0) or actual error
-    if (seedError.status === 0 || seedError.message.includes('already exists')) {
-      console.log('ℹ️  Test user already exists, skipping seed');
-    } else {
-      console.error('⚠️  Seed script error (non-fatal):', seedError.message);
-      if (seedError.stdout) console.log('   Stdout:', seedError.stdout);
-      if (seedError.stderr) console.log('   Stderr:', seedError.stderr);
-    }
+    // Seed failures are non-fatal (user might already exist)
+    console.log('ℹ️  Seed script completed (user may already exist)');
   }
   
   console.log('🚀 Starting server...');
@@ -58,11 +77,10 @@ try {
   require('../src/server.js');
   
 } catch (error) {
-  console.error('❌ Error during startup:');
+  console.error('❌ CRITICAL ERROR during startup:');
   console.error('   Message:', error.message);
-  if (error.stdout) console.error('   Stdout:', error.stdout.toString());
-  if (error.stderr) console.error('   Stderr:', error.stderr.toString());
-  console.error('   Full error:', error);
+  console.error('   Server will NOT start until this is fixed.');
+  console.error('   Check the error above and fix the issue.');
   process.exit(1);
 }
 

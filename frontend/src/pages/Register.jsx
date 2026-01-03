@@ -56,9 +56,39 @@ const Register = () => {
   const handleOAuth = (provider) => {
     // VITE_API_URL should be the full backend URL including /api
     // e.g., https://your-backend.railway.app/api
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-    // API_URL already includes /api, so we just append the OAuth path
-    window.location.href = `${API_URL}/auth/oauth/${provider}`;
+    let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    
+    // Fix: Ensure it's an absolute URL, not relative
+    // If it starts with /, it's relative - we need to construct the full URL
+    if (API_URL.startsWith('/')) {
+      // Relative URL - construct from current origin + API_URL
+      API_URL = `${window.location.origin}${API_URL}`;
+    } else if (!API_URL.startsWith('http://') && !API_URL.startsWith('https://')) {
+      // If it doesn't start with http/https, it might be malformed
+      console.error('Invalid VITE_API_URL:', API_URL);
+      // Try to extract the Railway URL if it's embedded in the Vercel URL
+      const match = API_URL.match(/railway\.app[^/]*/);
+      if (match) {
+        API_URL = `https://${match[0]}/api`;
+      } else {
+        API_URL = 'http://localhost:5000/api';
+      }
+    }
+    
+    // Remove any trailing slashes and ensure /api is at the end
+    API_URL = API_URL.replace(/\/+$/, '');
+    if (!API_URL.endsWith('/api')) {
+      // If /api is not at the end, add it
+      if (API_URL.endsWith('/')) {
+        API_URL = API_URL + 'api';
+      } else {
+        API_URL = API_URL + '/api';
+      }
+    }
+    
+    const oauthUrl = `${API_URL}/auth/oauth/${provider}`;
+    console.log('OAuth redirect URL:', oauthUrl); // Debug log
+    window.location.href = oauthUrl;
   };
 
   return (
