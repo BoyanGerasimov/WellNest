@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { chatService } from '../services/chatService';
+import { RobotIcon } from '../components/icons/Icons';
 
 const ChatCoach = () => {
   const [messages, setMessages] = useState([]);
@@ -108,7 +109,9 @@ const ChatCoach = () => {
             {messages.length === 0 ? (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
-                  <div className="text-6xl mb-4">🤖</div>
+                  <div className="flex justify-center mb-4">
+                    <RobotIcon className="w-20 h-20" />
+                  </div>
                   <h3 className="text-xl font-semibold text-slate-700 mb-2">Welcome to WellNest AI Coach!</h3>
                   <p className="text-slate-500">
                     Ask me anything about fitness, nutrition, or workouts. I'm here to help!

@@ -142,7 +142,7 @@ const ForumPostDetail = () => {
                 : 'text-slate-400 hover:bg-slate-50'
             }`}
           >
-            <span className="text-2xl">{post.isLiked ? '❤️' : '🤍'}</span>
+            <HeartIcon className="w-6 h-6" filled={post.isLiked} />
             <span className="block text-xs text-center mt-1">{post._count?.likes || 0}</span>
           </button>
         </div>

@@ -1,5 +1,5 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
 import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 import Layout from './components/Layout';
@@ -22,6 +22,59 @@ const Suggestions = lazy(() => import('./pages/Suggestions'));
 const ChatCoach = lazy(() => import('./pages/ChatCoach'));
 const Analytics = lazy(() => import('./pages/Analytics'));
 
+// Component cache for preloading
+const componentCache = new Map();
+
+// Preload component
+const preloadComponent = (componentLoader) => {
+  if (!componentCache.has(componentLoader)) {
+    componentCache.set(componentLoader, componentLoader());
+  }
+  return componentCache.get(componentLoader);
+};
+
+// Preload commonly used pages on idle
+const preloadCommonPages = () => {
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => {
+      // Preload dashboard, workouts, and meals (most commonly used)
+      preloadComponent(() => import('./pages/Dashboard'));
+      preloadComponent(() => import('./pages/Workouts'));
+      preloadComponent(() => import('./pages/Meals'));
+    });
+  } else {
+    // Fallback for browsers without requestIdleCallback
+    setTimeout(() => {
+      preloadComponent(() => import('./pages/Dashboard'));
+      preloadComponent(() => import('./pages/Workouts'));
+      preloadComponent(() => import('./pages/Meals'));
+    }, 2000);
+  }
+};
+
+// Component to handle preloading based on navigation
+const PreloadHandler = () => {
+  const location = useLocation();
+  
+  useEffect(() => {
+    // Preload related pages when user navigates
+    const path = location.pathname;
+    
+    if (path.startsWith('/dashboard')) {
+      preloadComponent(() => import('./pages/Workouts'));
+      preloadComponent(() => import('./pages/Meals'));
+    } else if (path.startsWith('/workouts')) {
+      preloadComponent(() => import('./pages/Meals'));
+      preloadComponent(() => import('./pages/Dashboard'));
+    } else if (path.startsWith('/meals')) {
+      preloadComponent(() => import('./pages/Workouts'));
+      preloadComponent(() => import('./pages/Dashboard'));
+    }
+  }, [location]);
+  
+  return null;
+};
+
 // Loading component
 const LoadingSpinner = () => (
   <div className="min-h-screen flex items-center justify-center bg-slate-50">
@@ -33,8 +86,14 @@ const LoadingSpinner = () => (
 );
 
 function App() {
+  // Preload common pages after initial render
+  useEffect(() => {
+    preloadCommonPages();
+  }, []);
+
   return (
     <AuthProvider>
+      <PreloadHandler />
       <Suspense fallback={<LoadingSpinner />}>
         <Routes>
           <Route path="/login" element={<Login />} />

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { workoutService } from '../services/workoutService';
+import { FireIcon, ClockIcon, MuscleIcon } from '../components/icons/Icons';
 
 const Workouts = () => {
   const [workouts, setWorkouts] = useState([]);
@@ -94,16 +95,16 @@ const Workouts = () => {
                   </p>
                   <div className="flex gap-6 text-sm">
                     <span className="flex items-center gap-1">
-                      <span className="text-red-500">🔥</span>
+                      <FireIcon className="w-4 h-4 text-red-500" />
                       <span className="font-medium">{workout.caloriesBurned} cal</span>
                     </span>
                     <span className="flex items-center gap-1">
-                      <span className="text-blue-500">⏱️</span>
+                      <ClockIcon className="w-4 h-4 text-blue-500" />
                       <span className="font-medium">{workout.totalDuration} min</span>
                     </span>
                     {workout.exercises && workout.exercises.length > 0 && (
                       <span className="flex items-center gap-1">
-                        <span className="text-green-500">💪</span>
+                        <MuscleIcon className="w-4 h-4 text-green-500" />
                         <span className="font-medium">{workout.exercises.length} exercises</span>
                       </span>
                     )}

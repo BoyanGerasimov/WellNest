@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
+import { ScaleIcon } from '../icons/Icons';
 
 ChartJS.register(
   CategoryScale,
@@ -120,7 +121,9 @@ const WeightChart = ({ user }) => {
     return (
       <div className="bg-white rounded-xl shadow-lg border border-slate-100 p-8 h-80 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-5xl mb-3">⚖️</div>
+          <div className="flex justify-center mb-3">
+            <ScaleIcon className="w-16 h-16" />
+          </div>
           <p className="text-slate-500 font-medium">Update your weight in profile to see progress</p>
         </div>
       </div>
@@ -128,12 +131,12 @@ const WeightChart = ({ user }) => {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-slate-100 p-6 h-80">
+    <div className="bg-white rounded-xl shadow-lg border border-slate-100 p-4 sm:p-6">
       <div className="mb-4">
-        <h3 className="text-lg font-bold text-slate-900">Weight Progress</h3>
-        <p className="text-sm text-slate-500 mt-1">Current vs Goal Weight</p>
+        <h3 className="text-base sm:text-lg font-bold text-slate-900">Weight Progress</h3>
+        <p className="text-xs sm:text-sm text-slate-500 mt-1">Current vs Goal Weight</p>
       </div>
-      <div className="h-64">
+      <div className="h-64 w-full">
         <Line data={data} options={options} />
       </div>
     </div>

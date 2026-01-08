@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { analyticsService } from '../services/analyticsService';
+import { CheckIcon, WarningIcon } from '../components/icons/Icons';
 
 const Analytics = () => {
   // Set default target date to 3 months from now
@@ -105,7 +106,19 @@ const Analytics = () => {
                 <p className={`text-2xl font-bold ${
                   prediction.onTrack ? 'text-green-700' : 'text-yellow-700'
                 }`}>
-                  {prediction.onTrack ? '✅ On Track' : '⚠️ Off Track'}
+                  <span className="flex items-center gap-2">
+                    {prediction.onTrack ? (
+                      <>
+                        <CheckIcon className="w-5 h-5" />
+                        On Track
+                      </>
+                    ) : (
+                      <>
+                        <WarningIcon className="w-5 h-5" />
+                        Off Track
+                      </>
+                    )}
+                  </span>
                 </p>
               </div>
             </div>

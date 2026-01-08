@@ -1,5 +1,20 @@
 import { useState, useEffect } from 'react';
 import { achievementService } from '../services/achievementService';
+import { TrophyIcon, FireIcon, SnackIcon, TargetIcon, MuscleIcon } from '../components/icons/Icons';
+
+// Map emoji icons to SVG icons
+const getAchievementIcon = (emoji) => {
+  const iconMap = {
+    '🏆': TrophyIcon,
+    '🔥': FireIcon,
+    '💪': MuscleIcon,
+    '🍎': SnackIcon,
+    '🎯': TargetIcon,
+  };
+  
+  const IconComponent = iconMap[emoji] || TrophyIcon;
+  return <IconComponent className="w-10 h-10" />;
+};
 
 const Achievements = () => {
   const [stats, setStats] = useState(null);
@@ -75,7 +90,9 @@ const Achievements = () => {
                 className="border border-slate-200 rounded-lg p-4 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start gap-3">
-                  <span className="text-4xl">{achievement.icon}</span>
+                  <div className="flex-shrink-0">
+                    {getAchievementIcon(achievement.icon)}
+                  </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-slate-900">{achievement.title}</h3>
                     <p className="text-sm text-slate-600 mt-1">{achievement.description}</p>

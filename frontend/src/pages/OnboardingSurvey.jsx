@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { userService } from '../services/userService';
+import { HandWaveIcon, LightbulbIcon } from '../components/icons/Icons';
 
 const OnboardingSurvey = () => {
   const { user, updateUser } = useAuth();
@@ -162,7 +163,7 @@ const OnboardingSurvey = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-600 rounded-full mb-4">
-            <span className="text-3xl">👋</span>
+            <HandWaveIcon className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-slate-900 mb-2">
             Welcome to WellNest!
@@ -362,7 +363,10 @@ const OnboardingSurvey = () => {
                 />
                 {calculateCalorieGoal() && !formData.dailyCalorieGoal && (
                   <p className="mt-2 text-sm text-slate-500">
-                    💡 Based on your info, we suggest {calculateCalorieGoal()} kcal/day
+                    <span className="flex items-center gap-2">
+                      <LightbulbIcon className="w-4 h-4" />
+                      Based on your info, we suggest {calculateCalorieGoal()} kcal/day
+                    </span>
                   </p>
                 )}
               </div>

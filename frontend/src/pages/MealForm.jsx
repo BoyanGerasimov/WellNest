@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { mealService } from '../services/mealService';
 import { barcodeService } from '../services/barcodeService';
+import { BreakfastIcon, LunchIcon, DinnerIcon, SnackIcon, CameraIcon, InfoIcon, WarningIcon, SearchIcon } from '../components/icons/Icons';
 
 const MealForm = () => {
   const { id } = useParams();
@@ -494,7 +495,10 @@ const MealForm = () => {
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
-                  🍳 Breakfast
+                  <span className="flex items-center gap-2">
+                    <BreakfastIcon className="w-5 h-5" />
+                    Breakfast
+                  </span>
                 </button>
                 <button
                   type="button"
@@ -505,7 +509,10 @@ const MealForm = () => {
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
-                  🥗 Lunch
+                  <span className="flex items-center gap-2">
+                    <LunchIcon className="w-5 h-5" />
+                    Lunch
+                  </span>
                 </button>
                 <button
                   type="button"
@@ -516,7 +523,10 @@ const MealForm = () => {
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
-                  🍽️ Dinner
+                  <span className="flex items-center gap-2">
+                    <DinnerIcon className="w-5 h-5" />
+                    Dinner
+                  </span>
                 </button>
                 <button
                   type="button"
@@ -527,7 +537,10 @@ const MealForm = () => {
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
-                  🍎 Snacks
+                  <span className="flex items-center gap-2">
+                    <SnackIcon className="w-5 h-5" />
+                    Snacks
+                  </span>
                 </button>
               </div>
             </div>
@@ -642,7 +655,10 @@ const MealForm = () => {
                   : 'border-transparent text-slate-500 hover:text-slate-700'
               }`}
             >
-              🔍 Search
+              <span className="flex items-center gap-2">
+                <SearchIcon className="w-4 h-4" />
+                Search
+              </span>
             </button>
             <button
               type="button"
@@ -653,7 +669,10 @@ const MealForm = () => {
                   : 'border-transparent text-slate-500 hover:text-slate-700'
               }`}
             >
-              📷 Barcode
+              <span className="flex items-center gap-2">
+                <CameraIcon className="w-4 h-4" />
+                Barcode
+              </span>
             </button>
             <button
               type="button"
@@ -664,7 +683,10 @@ const MealForm = () => {
                   : 'border-transparent text-slate-500 hover:text-slate-700'
               }`}
             >
-              🍽️ Meal Scanner
+              <span className="flex items-center gap-2">
+                <CameraIcon className="w-4 h-4" />
+                Meal Scanner
+              </span>
             </button>
           </div>
 
@@ -749,7 +771,10 @@ const MealForm = () => {
               <h4 className="font-semibold text-slate-900 mb-3">{selectedFood.description}</h4>
               {nutritionData.note && (
                 <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
-                  ℹ️ {nutritionData.note}
+                  <span className="flex items-start gap-2">
+                    <InfoIcon className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                    {nutritionData.note}
+                  </span>
                 </div>
               )}
               
@@ -794,7 +819,10 @@ const MealForm = () => {
                 </p>
                 {portionSize === 0 && (
                   <p className="mt-1 text-xs text-amber-600">
-                    ⚠️ Portion size cannot be 0
+                    <span className="flex items-center gap-1">
+                      <WarningIcon className="w-4 h-4" />
+                      Portion size cannot be 0
+                    </span>
                   </p>
                 )}
               </div>

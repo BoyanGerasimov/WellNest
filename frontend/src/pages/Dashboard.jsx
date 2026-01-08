@@ -9,6 +9,21 @@ import { suggestionService } from '../services/suggestionService';
 import CalorieChart from '../components/charts/CalorieChart';
 import WorkoutFrequencyChart from '../components/charts/WorkoutFrequencyChart';
 import WeightChart from '../components/charts/WeightChart';
+import { ChartIcon, LightbulbIcon, HandWaveIcon, MuscleIcon, HamburgerIcon, FireIcon, TrophyIcon, SnackIcon, TargetIcon } from '../components/icons/Icons';
+
+// Map emoji icons to SVG icons for achievements
+const getAchievementIcon = (emoji) => {
+  const iconMap = {
+    '🏆': TrophyIcon,
+    '🔥': FireIcon,
+    '💪': MuscleIcon,
+    '🍎': SnackIcon,
+    '🎯': TargetIcon,
+  };
+  
+  const IconComponent = iconMap[emoji] || TrophyIcon;
+  return <IconComponent className="w-4 h-4" />;
+};
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -84,8 +99,11 @@ const Dashboard = () => {
 
   const totalCaloriesBurned = workoutStats?.totalCaloriesBurned || 0;
   const totalCaloriesIntake = mealStats?.totalCalories || 0;
-  const netCalories = totalCaloriesIntake - totalCaloriesBurned;
   const totalWorkouts = workoutStats?.totalWorkouts || 0;
+  
+  // Calculate average net calories per day (last 30 days)
+  const daysWithData = Math.max(1, Math.min(30, mealStats?.totalMeals || 1));
+  const averageNetCaloriesPerDay = (totalCaloriesIntake - totalCaloriesBurned) / daysWithData;
 
   return (
     <div className="space-y-6 sm:space-y-8 px-4 sm:px-0">
@@ -93,7 +111,10 @@ const Dashboard = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
-            Welcome back, {user?.name?.split(' ')[0] || 'there'}! 👋
+            <span className="flex items-center gap-2">
+              Welcome back, {user?.name?.split(' ')[0] || 'there'}!
+              <HandWaveIcon className="w-5 h-5" />
+            </span>
           </h1>
           <p className="mt-1.5 text-sm sm:text-base text-slate-600">
             Here's your fitness overview for the last 30 days
@@ -121,7 +142,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-slate-600">Workouts</p>
             <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
-              <span className="text-xl">💪</span>
+              <MuscleIcon className="w-6 h-6" />
             </div>
           </div>
           <p className="text-2xl sm:text-3xl font-bold text-slate-900">{totalWorkouts}</p>
@@ -131,8 +152,8 @@ const Dashboard = () => {
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-slate-600">Calories Intake</p>
-            <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-              <span className="text-xl">🍎</span>
+            <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
+              <HamburgerIcon className="w-6 h-6" />
             </div>
           </div>
           <p className="text-2xl sm:text-3xl font-bold text-slate-900">{Math.round(totalCaloriesIntake).toLocaleString()}</p>
@@ -142,8 +163,8 @@ const Dashboard = () => {
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-slate-600">Calories Burned</p>
-            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-              <span className="text-xl">🔥</span>
+            <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
+              <FireIcon className="w-6 h-6" />
             </div>
           </div>
           <p className="text-2xl sm:text-3xl font-bold text-slate-900">{Math.round(totalCaloriesBurned).toLocaleString()}</p>
@@ -153,14 +174,14 @@ const Dashboard = () => {
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-slate-600">Net Calories</p>
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <span className="text-xl">📊</span>
+            <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
+              <ChartIcon className="w-6 h-6" />
             </div>
           </div>
-          <p className={`text-2xl sm:text-3xl font-bold ${netCalories >= 0 ? 'text-slate-900' : 'text-orange-600'}`}>
-            {netCalories >= 0 ? '+' : ''}{Math.round(netCalories).toLocaleString()}
+          <p className={`text-2xl sm:text-3xl font-bold ${averageNetCaloriesPerDay >= 0 ? 'text-slate-900' : 'text-orange-600'}`}>
+            {averageNetCaloriesPerDay >= 0 ? '+' : ''}{Math.round(averageNetCaloriesPerDay).toLocaleString()}
           </p>
-          <p className="text-xs text-slate-500 mt-1">Intake - Burned</p>
+          <p className="text-xs text-slate-500 mt-1">Avg per day</p>
         </div>
       </div>
 
@@ -222,7 +243,7 @@ const Dashboard = () => {
                     className="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-1.5 border border-slate-200"
                     title={achievement.description}
                   >
-                    <span className="text-lg">{achievement.icon}</span>
+                    {getAchievementIcon(achievement.icon)}
                     <span className="text-xs font-medium text-slate-700">{achievement.title}</span>
                   </div>
                 ))}
@@ -318,7 +339,10 @@ const Dashboard = () => {
         <div className="space-y-4 sm:space-y-6">
           {suggestions && suggestions.all && suggestions.all.length > 0 && (
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
-              <h2 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">💡 Suggestions</h2>
+              <h2 className="text-base sm:text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                <LightbulbIcon className="w-5 h-5" />
+                Suggestions
+              </h2>
               <div className="space-y-3">
                 {suggestions.all.slice(0, 3).map((suggestion, index) => (
                   <div
@@ -332,7 +356,9 @@ const Dashboard = () => {
                     }`}
                   >
                     <div className="flex items-start gap-2">
-                      <span className="text-lg">{suggestion.icon}</span>
+                      <div className="flex-shrink-0 mt-0.5">
+                        <LightbulbIcon className="w-5 h-5" />
+                      </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-slate-900">{suggestion.message}</p>
                         <span

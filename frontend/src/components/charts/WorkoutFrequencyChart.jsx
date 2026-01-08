@@ -90,7 +90,12 @@ const WorkoutFrequencyChart = ({ workouts }) => {
           font: {
             size: 11
           },
-          color: '#6B7280'
+          color: '#6B7280',
+          maxRotation: 45,
+          minRotation: 0
+        },
+        padding: {
+          bottom: 10
         }
       },
       y: {
@@ -113,18 +118,21 @@ const WorkoutFrequencyChart = ({ workouts }) => {
             weight: '600'
           },
           color: '#374151'
+        },
+        padding: {
+          top: 10
         }
       }
     }
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-slate-100 p-6 h-80">
+    <div className="bg-white rounded-xl shadow-lg border border-slate-100 p-4 sm:p-6">
       <div className="mb-4">
-        <h3 className="text-lg font-bold text-slate-900">Workout Frequency</h3>
-        <p className="text-sm text-slate-500 mt-1">Last 7 days activity</p>
+        <h3 className="text-base sm:text-lg font-bold text-slate-900">Workout Frequency</h3>
+        <p className="text-xs sm:text-sm text-slate-500 mt-1">Last 7 days activity</p>
       </div>
-      <div className="h-64">
+      <div className="h-64 w-full">
         <Bar data={chartData} options={options} />
       </div>
     </div>

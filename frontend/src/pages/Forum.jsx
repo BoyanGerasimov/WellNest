@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { forumService } from '../services/forumService';
+import { HeartIcon } from '../components/icons/Icons';
 
 const Forum = () => {
   const [posts, setPosts] = useState([]);
@@ -142,7 +143,7 @@ const Forum = () => {
                       : 'text-slate-400 hover:bg-slate-50'
                   }`}
                 >
-                  <span className="text-xl">{post.isLiked ? '❤️' : '🤍'}</span>
+                  <HeartIcon className="w-5 h-5" filled={post.isLiked} />
                   <span className="block text-xs text-center mt-1">{post._count?.likes || 0}</span>
                 </button>
               </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { chatService } from '../services/chatService';
+import { RobotIcon } from './icons/Icons';
 
 const ChatModal = ({ isOpen, onClose }) => {
   const [messages, setMessages] = useState([]);
@@ -97,7 +98,7 @@ const ChatModal = ({ isOpen, onClose }) => {
       />
       
       {/* Modal */}
-      <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border border-slate-200">
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-[calc(100vw-2rem)] sm:w-96 max-w-sm h-[calc(100vh-8rem)] sm:h-[600px] max-h-[600px] bg-white rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border border-slate-200">
         {/* Header */}
         <div className="bg-teal-600 px-6 py-4 flex items-center justify-between">
           <div>
@@ -131,7 +132,9 @@ const ChatModal = ({ isOpen, onClose }) => {
           {messages.length === 0 ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <div className="text-5xl mb-3">🤖</div>
+                <div className="flex justify-center mb-3">
+                  <RobotIcon className="w-16 h-16" />
+                </div>
                 <h3 className="text-lg font-semibold text-slate-700 mb-2">Welcome to WellNest AI Coach!</h3>
                 <p className="text-sm text-slate-500">
                   Ask me anything about fitness, nutrition, or workouts.
