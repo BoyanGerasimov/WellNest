@@ -77,86 +77,98 @@ const Meals = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:gap-6">
         {meals.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg shadow">
+          <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-slate-200">
             <p className="text-slate-500 mb-4">No meals logged yet. Start tracking your nutrition!</p>
             <Link
               to="/meals/new"
-              className="inline-block bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md"
+              className="inline-block bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg transition-colors"
             >
               Log Your First Meal
             </Link>
           </div>
         ) : (
           meals.map((meal) => (
-            <div key={meal.id} className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-lg font-semibold text-slate-900">{meal.name}</h3>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getMealTypeColor(meal.type)}`}>
-                      {meal.type}
-                    </span>
+            <div key={meal.id} className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6 hover:shadow-md transition-shadow">
+              <div className="flex flex-col gap-4">
+                <div className="flex justify-between items-start gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
+                      <h3 className="text-lg sm:text-xl font-semibold text-slate-900 break-words">{meal.name}</h3>
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getMealTypeColor(meal.type)}`}>
+                        {meal.type}
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-500">
+                      {new Date(meal.date).toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
+                    </p>
                   </div>
-                  <p className="text-sm text-slate-500 mb-3">
-                    {new Date(meal.date).toLocaleDateString('en-US', {
-                      weekday: 'short',
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric'
-                    })}
-                  </p>
-                  <div className="grid grid-cols-4 gap-4 text-sm mb-3">
-                    <div>
-                      <span className="text-slate-500">Calories</span>
-                      <p className="font-semibold text-slate-900">{Math.round(meal.totalCalories)}</p>
+                  <div className="flex gap-2 flex-shrink-0">
+                    <button
+                      onClick={() => navigate(`/meals/${meal.id}/edit`)}
+                      className="bg-teal-50 hover:bg-teal-100 text-teal-700 px-3 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-1.5"
+                      title="Edit meal"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                      <span className="hidden sm:inline">Edit</span>
+                    </button>
+                    <button
+                      onClick={() => handleDelete(meal.id)}
+                      className="bg-red-50 hover:bg-red-100 text-red-700 px-3 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-1.5"
+                      title="Delete meal"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      <span className="hidden sm:inline">Delete</span>
+                    </button>
+                  </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4 mb-4">
+                    <div className="bg-slate-50 rounded-lg p-3">
+                      <span className="text-xs text-slate-500 block mb-1">Calories</span>
+                      <p className="text-lg font-bold text-slate-900">{Math.round(meal.totalCalories)}</p>
                     </div>
-                    <div>
-                      <span className="text-slate-500">Protein</span>
-                      <p className="font-semibold text-slate-900">{meal.totalProtein.toFixed(1)}g</p>
+                    <div className="bg-slate-50 rounded-lg p-3">
+                      <span className="text-xs text-slate-500 block mb-1">Protein</span>
+                      <p className="text-lg font-bold text-slate-900">{meal.totalProtein.toFixed(1)}g</p>
                     </div>
-                    <div>
-                      <span className="text-slate-500">Carbs</span>
-                      <p className="font-semibold text-slate-900">{meal.totalCarbs.toFixed(1)}g</p>
+                    <div className="bg-slate-50 rounded-lg p-3">
+                      <span className="text-xs text-slate-500 block mb-1">Carbs</span>
+                      <p className="text-lg font-bold text-slate-900">{meal.totalCarbs.toFixed(1)}g</p>
                     </div>
-                    <div>
-                      <span className="text-slate-500">Fats</span>
-                      <p className="font-semibold text-slate-900">{meal.totalFats.toFixed(1)}g</p>
+                    <div className="bg-slate-50 rounded-lg p-3">
+                      <span className="text-xs text-slate-500 block mb-1">Fats</span>
+                      <p className="text-lg font-bold text-slate-900">{meal.totalFats.toFixed(1)}g</p>
                     </div>
                   </div>
                   {meal.foodItems && meal.foodItems.length > 0 && (
-                    <div className="mt-3">
-                      <p className="text-sm text-slate-600 mb-1">Food items:</p>
+                    <div className="mt-4">
+                      <p className="text-sm font-medium text-slate-700 mb-2">Food items:</p>
                       <div className="flex flex-wrap gap-2">
                         {meal.foodItems.slice(0, 5).map((item, index) => (
-                          <span key={index} className="text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded">
+                          <span key={index} className="text-xs bg-teal-50 text-teal-700 px-2.5 py-1 rounded-md font-medium">
                             {item.name || item.description}
                           </span>
                         ))}
                         {meal.foodItems.length > 5 && (
-                          <span className="text-xs text-slate-500">+{meal.foodItems.length - 5} more</span>
+                          <span className="text-xs text-slate-500 px-2.5 py-1">+{meal.foodItems.length - 5} more</span>
                         )}
                       </div>
                     </div>
                   )}
                   {meal.notes && (
-                    <p className="mt-3 text-sm text-slate-600 line-clamp-2">{meal.notes}</p>
+                    <p className="mt-4 text-sm text-slate-600 break-words">{meal.notes}</p>
                   )}
-                </div>
-                <div className="flex gap-2 ml-4">
-                  <button
-                    onClick={() => navigate(`/meals/${meal.id}/edit`)}
-                    className="text-teal-600 hover:text-teal-700 px-3 py-1 rounded hover:bg-teal-50 transition-colors"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(meal.id)}
-                    className="text-red-600 hover:text-red-700 px-3 py-1 rounded hover:bg-red-50 transition-colors"
-                  >
-                    Delete
-                  </button>
                 </div>
               </div>
             </div>

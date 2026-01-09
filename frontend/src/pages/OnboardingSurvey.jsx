@@ -356,8 +356,8 @@ const OnboardingSurvey = () => {
                   value={formData.dailyCalorieGoal}
                   onChange={handleChange}
                   min="1000"
-                  max="5000"
-                  step="50"
+                  max="10000"
+                  step="1"
                   placeholder={calculateCalorieGoal() ? `Suggested: ${calculateCalorieGoal()}` : 'e.g., 2000'}
                   className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 />
