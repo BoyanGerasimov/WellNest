@@ -28,6 +28,7 @@ exports.getProfile = async (req, res, next) => {
         dateOfBirth: true,
         gender: true,
         height: true,
+        startingWeight: true,
         currentWeight: true,
         goalWeight: true,
         activityLevel: true,
@@ -35,6 +36,7 @@ exports.getProfile = async (req, res, next) => {
         role: true,
         isEmailVerified: true,
         lastLogin: true,
+        lastWeightCheckinAt: true,
         createdAt: true,
         updatedAt: true
       }
@@ -64,7 +66,6 @@ exports.updateProfile = async (req, res, next) => {
     }
 
     const {
-      name,
       dateOfBirth,
       gender,
       height,
@@ -74,15 +75,61 @@ exports.updateProfile = async (req, res, next) => {
       dailyCalorieGoal
     } = req.body;
 
+    // Prevent name changes (immutable)
+    if (req.body.name !== undefined) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name cannot be changed'
+      });
+    }
+
     const updateData = {};
-    if (name) updateData.name = name;
     if (dateOfBirth) updateData.dateOfBirth = new Date(dateOfBirth);
     if (gender) updateData.gender = gender;
     if (height !== undefined) updateData.height = parseFloat(height);
-    if (currentWeight !== undefined) updateData.currentWeight = parseFloat(currentWeight);
     if (goalWeight !== undefined) updateData.goalWeight = parseFloat(goalWeight);
     if (activityLevel) updateData.activityLevel = activityLevel;
     if (dailyCalorieGoal !== undefined) updateData.dailyCalorieGoal = parseInt(dailyCalorieGoal);
+
+    // Weight handling:
+    // - Allow setting initial weight only once during onboarding (sets startingWeight + creates first weight entry)
+    // - After onboarding, weight changes must go through /api/weights (weekly check-ins)
+    if (currentWeight !== undefined) {
+      const existingUser = await prisma.user.findUnique({
+        where: { id: req.user.id },
+        select: {
+          startingWeight: true
+        }
+      });
+
+      const parsedWeight = parseFloat(currentWeight);
+
+      if (!existingUser?.startingWeight) {
+        const now = new Date();
+        updateData.startingWeight = parsedWeight;
+        updateData.currentWeight = parsedWeight;
+        updateData.lastWeightCheckinAt = now;
+
+        // Create initial weight entry for history/chart
+        try {
+          await prisma.weightEntry.create({
+            data: {
+              userId: req.user.id,
+              weight: parsedWeight,
+              recordedAt: now,
+            }
+          });
+        } catch (e) {
+          // Non-fatal: user update should still succeed even if entry creation fails
+          console.warn('⚠️ Failed to create initial weight entry:', e.message);
+        }
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: 'Weight cannot be edited from profile. Please use the weekly weight check-in.'
+        });
+      }
+    }
 
     const user = await prisma.user.update({
       where: { id: req.user.id },
@@ -95,11 +142,13 @@ exports.updateProfile = async (req, res, next) => {
         dateOfBirth: true,
         gender: true,
         height: true,
+        startingWeight: true,
         currentWeight: true,
         goalWeight: true,
         activityLevel: true,
         dailyCalorieGoal: true,
         role: true,
+        lastWeightCheckinAt: true,
         updatedAt: true
       }
     });

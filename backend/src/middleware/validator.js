@@ -41,11 +41,14 @@ exports.validateLogin = [
 
 // Update profile validation
 exports.validateUpdateProfile = [
+  // Name is immutable after registration/OAuth
   body('name')
-    .optional()
-    .trim()
-    .isLength({ min: 2, max: 50 })
-    .withMessage('Name must be between 2 and 50 characters'),
+    .custom((value) => {
+      if (value !== undefined) {
+        throw new Error('Name cannot be changed');
+      }
+      return true;
+    }),
   
   body('dateOfBirth')
     .optional()
@@ -81,6 +84,15 @@ exports.validateUpdateProfile = [
     .optional()
     .isInt({ min: 0, max: 10000 })
     .withMessage('Daily calorie goal must be between 0 and 10000')
+];
+
+// Weight check-in validation
+exports.validateWeightEntry = [
+  body('weight')
+    .notEmpty()
+    .withMessage('Weight is required')
+    .isFloat({ min: 20, max: 500 })
+    .withMessage('Weight must be between 20 and 500 kg')
 ];
 
 // Update password validation

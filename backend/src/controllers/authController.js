@@ -71,10 +71,12 @@ exports.register = async (req, res, next) => {
         dateOfBirth: true,
         gender: true,
         height: true,
+        startingWeight: true,
         currentWeight: true,
         goalWeight: true,
         activityLevel: true,
         dailyCalorieGoal: true,
+        lastWeightCheckinAt: true,
         createdAt: true
       }
     });
@@ -148,10 +150,12 @@ exports.login = async (req, res, next) => {
         dateOfBirth: true,
         gender: true,
         height: true,
+        startingWeight: true,
         currentWeight: true,
         goalWeight: true,
         activityLevel: true,
-        dailyCalorieGoal: true
+        dailyCalorieGoal: true,
+        lastWeightCheckinAt: true
       }
     });
 
@@ -183,6 +187,7 @@ exports.getMe = async (req, res, next) => {
         dateOfBirth: true,
         gender: true,
         height: true,
+        startingWeight: true,
         currentWeight: true,
         goalWeight: true,
         activityLevel: true,
@@ -190,6 +195,7 @@ exports.getMe = async (req, res, next) => {
         role: true,
         isEmailVerified: true,
         lastLogin: true,
+        lastWeightCheckinAt: true,
         createdAt: true,
         updatedAt: true
       }

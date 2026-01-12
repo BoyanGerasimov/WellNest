@@ -295,6 +295,16 @@ try {
   throw error;
 }
 
+try {
+  console.log('  → Loading weight routes...');
+  app.use('/api/weights', require('./routes/weights'));
+  console.log('✅ Weight routes loaded');
+} catch (error) {
+  console.error('❌ Error loading weight routes:', error.message);
+  console.error('Stack:', error.stack);
+  throw error;
+}
+
 
 // 404 handler
 app.use((req, res) => {

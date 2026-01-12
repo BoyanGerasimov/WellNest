@@ -31,6 +31,7 @@ const backendDir = path.join(__dirname, '..');
 console.log(`   Working directory: ${backendDir}`);
 console.log(`   DATABASE_URL: ${process.env.DATABASE_URL ? 'Set' : 'NOT SET'}`);
 console.log(`   DIRECT_URL: ${process.env.DIRECT_URL ? 'Set' : 'NOT SET'}`);
+console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'development'}`);
 
 // Check if migrations directory exists
 const migrationsDir = path.join(backendDir, 'prisma', 'migrations');
@@ -51,6 +52,10 @@ if (!process.env.DATABASE_URL) {
 }
 
 try {
+  // Always generate Prisma client on startup (helps when schema/client got out of sync)
+  console.log('   Executing: npx prisma generate');
+  runCommand('npx prisma generate', 'Generating Prisma Client');
+
   // Run migrations - CRITICAL: Must succeed or server won't start
   console.log('   Executing: npx prisma migrate deploy');
   console.log('   This may take a moment...');
@@ -77,16 +82,24 @@ try {
   }
   
   if (useDbPush) {
-    // Use db push to sync schema directly (no migration files needed)
-    console.log('   Using prisma db push to sync schema...');
-    try {
-      runCommand('npx prisma db push --accept-data-loss', 'Pushing schema to database');
-      console.log('✅ Database schema synced successfully');
-    } catch (pushError) {
-      console.error('❌ Database schema push failed!');
-      console.error('   Error details:', pushError.message);
-      console.error('   This is a critical error. Server will not start.');
+    // If no migrations exist, db push can be used *only* for non-production environments.
+    const isProduction = process.env.NODE_ENV === 'production';
+    if (isProduction) {
+      console.error('❌ No migration files found, and NODE_ENV=production.');
+      console.error('   Refusing to run `prisma db push --accept-data-loss` in production.');
+      console.error('   Fix: create & commit a Prisma migration locally, then redeploy.');
       process.exit(1);
+    } else {
+      console.warn('   ⚠️  No migration files found. Using prisma db push (non-production only)...');
+      try {
+        runCommand('npx prisma db push --accept-data-loss', 'Pushing schema to database');
+        console.log('✅ Database schema synced successfully');
+      } catch (pushError) {
+        console.error('❌ Database schema push failed!');
+        console.error('   Error details:', pushError.message);
+        console.error('   This is a critical error. Server will not start.');
+        process.exit(1);
+      }
     }
   } else {
     // Try to deploy migrations
@@ -95,8 +108,16 @@ try {
       console.log('✅ Migrations completed successfully');
     } catch (migrateError) {
       console.error('❌ Migration failed!');
-      console.error('   Trying db push as fallback...');
-      
+      const isProduction = process.env.NODE_ENV === 'production';
+
+      if (isProduction) {
+        console.error('   NODE_ENV=production. Refusing to fallback to `db push --accept-data-loss`.');
+        console.error('   Migration error:', migrateError.message);
+        console.error('   This is a critical error. Server will not start.');
+        process.exit(1);
+      }
+
+      console.error('   Trying db push as fallback (non-production only)...');
       try {
         runCommand('npx prisma db push --accept-data-loss', 'Pushing schema to database');
         console.log('✅ Database schema synced successfully (via fallback)');

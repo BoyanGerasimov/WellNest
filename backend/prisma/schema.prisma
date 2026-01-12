@@ -19,6 +19,7 @@ model User {
   dateOfBirth       DateTime?
   gender            String?   // male, female, other
   height            Float?    // in cm
+  startingWeight    Float?    // in kg (set once during onboarding)
   currentWeight     Float?    // in kg
   goalWeight        Float?    // in kg
   activityLevel     String?   // sedentary, lightly_active, moderately_active, very_active, extremely_active
@@ -26,6 +27,7 @@ model User {
   role              String    @default("user") // user, admin
   isEmailVerified   Boolean   @default(false)
   lastLogin         DateTime?
+  lastWeightCheckinAt DateTime? // last time user recorded their weight
   
   // OAuth fields
   oauthProvider     String?   // google, github
@@ -34,6 +36,7 @@ model User {
   // Relations
   workouts          Workout[]
   meals             Meal[]
+  weightEntries     WeightEntry[]
   achievements      Achievement[]
   forumPosts        ForumPost[]
   forumComments     ForumComment[]
@@ -45,6 +48,19 @@ model User {
 
   @@index([email])
   @@map("users")
+}
+
+// Weight Entry Model (weekly check-ins + history)
+model WeightEntry {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  weight     Float
+  recordedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  @@index([userId, recordedAt(sort: Desc)])
+  @@map("weight_entries")
 }
 
 // Workout Model

@@ -21,20 +21,55 @@ ChartJS.register(
   Legend
 );
 
-const WeightChart = ({ user }) => {
-  // For now, we'll show current weight vs goal weight
-  // In the future, this could show weight history if we add a weight tracking feature
-  if (!user || !user.currentWeight) {
+const WeightChart = ({ user, entries, startingWeight, goalWeight }) => {
+  // Backward compatible:
+  // - If `entries` provided: show progression chart
+  // - Else: show simple current vs goal chart using `user`
+  const hasEntries = Array.isArray(entries) && entries.length > 0;
+
+  const baseline = startingWeight ?? user?.startingWeight ?? user?.currentWeight;
+  const current = user?.currentWeight;
+  const goal = goalWeight ?? user?.goalWeight ?? current ?? baseline;
+
+  if (!baseline && !hasEntries) {
     return (
-      <div className="bg-white rounded-lg shadow p-6 h-64 flex items-center justify-center">
-        <p className="text-slate-500">Update your weight in profile to see progress</p>
+      <div className="bg-white rounded-xl shadow-lg border border-slate-100 p-8 h-80 flex items-center justify-center">
+        <div className="text-center">
+          <div className="flex justify-center mb-3">
+            <ScaleIcon className="w-16 h-16" />
+          </div>
+          <p className="text-slate-500 font-medium">Add your initial weight to start tracking</p>
+        </div>
       </div>
     );
   }
 
-  // Create a simple chart showing current vs goal
-  const labels = ['Current', 'Goal'];
-  const weights = [user.currentWeight, user.goalWeight || user.currentWeight];
+  let labels = [];
+  let weights = [];
+
+  if (hasEntries) {
+    // last 12 weeks (approx)
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 7 * 12);
+
+    const filtered = entries
+      .map((e) => ({
+        ...e,
+        recordedAt: new Date(e.recordedAt),
+      }))
+      .filter((e) => !Number.isNaN(e.recordedAt.getTime()))
+      .filter((e) => e.recordedAt >= cutoff)
+      .sort((a, b) => a.recordedAt - b.recordedAt);
+
+    labels = filtered.map((e) =>
+      e.recordedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    );
+    weights = filtered.map((e) => e.weight);
+  } else {
+    // Simple chart showing current vs goal
+    labels = ['Current', 'Goal'];
+    weights = [current ?? baseline, goal ?? (current ?? baseline)];
+  }
 
   const data = {
     labels,
@@ -117,24 +152,13 @@ const WeightChart = ({ user }) => {
     }
   };
 
-  if (!user || !user.currentWeight) {
-    return (
-      <div className="bg-white rounded-xl shadow-lg border border-slate-100 p-8 h-80 flex items-center justify-center">
-        <div className="text-center">
-          <div className="flex justify-center mb-3">
-            <ScaleIcon className="w-16 h-16" />
-          </div>
-          <p className="text-slate-500 font-medium">Update your weight in profile to see progress</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-white rounded-xl shadow-lg border border-slate-100 p-4 sm:p-6">
       <div className="mb-4">
         <h3 className="text-base sm:text-lg font-bold text-slate-900">Weight Progress</h3>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1">Current vs Goal Weight</p>
+        <p className="text-xs sm:text-sm text-slate-500 mt-1">
+          {hasEntries ? 'Last 12 weeks' : 'Current vs Goal'}
+        </p>
       </div>
       <div className="h-64 w-full">
         <Line data={data} options={options} />

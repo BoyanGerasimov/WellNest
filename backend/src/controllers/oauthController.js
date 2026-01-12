@@ -59,10 +59,12 @@ exports.googleCallback = async (req, res, next) => {
           dateOfBirth: true,
           gender: true,
           height: true,
+          startingWeight: true,
           currentWeight: true,
           goalWeight: true,
           activityLevel: true,
-          dailyCalorieGoal: true
+          dailyCalorieGoal: true,
+          lastWeightCheckinAt: true
         }
       });
     } else {
@@ -86,10 +88,12 @@ exports.googleCallback = async (req, res, next) => {
           dateOfBirth: true,
           gender: true,
           height: true,
+          startingWeight: true,
           currentWeight: true,
           goalWeight: true,
           activityLevel: true,
-          dailyCalorieGoal: true
+          dailyCalorieGoal: true,
+          lastWeightCheckinAt: true
         }
       });
     }
