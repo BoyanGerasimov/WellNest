@@ -19,27 +19,41 @@ ChartJS.register(
 );
 
 const WorkoutFrequencyChart = ({ workouts }) => {
-  if (!workouts || workouts.length === 0) {
-    return (
-      <div className="bg-white rounded-lg shadow p-6 h-64 flex items-center justify-center">
-        <p className="text-slate-500">No workout data available yet</p>
-      </div>
-    );
+  // Generate date range for last 7 days
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const dateMap = new Map();
+  
+  // Initialize all dates in the range with 0 values
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    const dateKey = date.toISOString().split('T')[0]; // YYYY-MM-DD format for consistent sorting
+    dateMap.set(dateKey, { 
+      dateKey, 
+      date: new Date(date), 
+      count: 0 
+    });
   }
 
   // Group workouts by date
-  const dateMap = new Map();
-  workouts.forEach(workout => {
-    const date = new Date(workout.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    dateMap.set(date, (dateMap.get(date) || 0) + 1);
-  });
+  if (workouts && workouts.length > 0) {
+    workouts.forEach(workout => {
+      const workoutDate = new Date(workout.date);
+      workoutDate.setHours(0, 0, 0, 0);
+      const dateKey = workoutDate.toISOString().split('T')[0];
+      if (dateMap.has(dateKey)) {
+        dateMap.get(dateKey).count += 1;
+      }
+    });
+  }
 
-  const sortedData = Array.from(dateMap.entries())
-    .sort((a, b) => new Date(a[0]) - new Date(b[0]))
-    .slice(-7); // Last 7 days
+  // Sort by date and format labels
+  const sortedData = Array.from(dateMap.values())
+    .sort((a, b) => a.date - b.date);
 
-  const labels = sortedData.map(([date]) => date);
-  const data = sortedData.map(([, count]) => count);
+  const labels = sortedData.map(d => d.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+  const data = sortedData.map(d => d.count);
 
   const chartData = {
     labels,

@@ -22,36 +22,54 @@ ChartJS.register(
 );
 
 const CalorieChart = ({ mealStats, workoutStats }) => {
-  // Combine meal and workout data by date
+  // Generate date range for last 30 days
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const dateMap = new Map();
+  
+  // Initialize all dates in the range with 0 values
+  for (let i = 29; i >= 0; i--) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    const dateKey = date.toISOString().split('T')[0]; // YYYY-MM-DD format for consistent sorting
+    dateMap.set(dateKey, { 
+      dateKey, 
+      date: new Date(date), 
+      intake: 0, 
+      burned: 0 
+    });
+  }
 
   // Add meal calories (intake)
   if (mealStats?.meals) {
     mealStats.meals.forEach(meal => {
-      const date = new Date(meal.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      if (!dateMap.has(date)) {
-        dateMap.set(date, { date, intake: 0, burned: 0 });
+      const mealDate = new Date(meal.date);
+      mealDate.setHours(0, 0, 0, 0);
+      const dateKey = mealDate.toISOString().split('T')[0];
+      if (dateMap.has(dateKey)) {
+        dateMap.get(dateKey).intake += meal.totalCalories || 0;
       }
-      dateMap.get(date).intake += meal.totalCalories || 0;
     });
   }
 
   // Add workout calories (burned)
   if (workoutStats?.workouts) {
     workoutStats.workouts.forEach(workout => {
-      const date = new Date(workout.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      if (!dateMap.has(date)) {
-        dateMap.set(date, { date, intake: 0, burned: 0 });
+      const workoutDate = new Date(workout.date);
+      workoutDate.setHours(0, 0, 0, 0);
+      const dateKey = workoutDate.toISOString().split('T')[0];
+      if (dateMap.has(dateKey)) {
+        dateMap.get(dateKey).burned += workout.caloriesBurned || 0;
       }
-      dateMap.get(date).burned += workout.caloriesBurned || 0;
     });
   }
 
+  // Sort by date and format labels
   const sortedData = Array.from(dateMap.values()).sort((a, b) => {
-    return new Date(a.date) - new Date(b.date);
+    return a.date - b.date;
   });
 
-  const labels = sortedData.map(d => d.date);
+  const labels = sortedData.map(d => d.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
   const intakeData = sortedData.map(d => Math.round(d.intake));
   const burnedData = sortedData.map(d => Math.round(d.burned));
 
