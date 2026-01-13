@@ -168,6 +168,8 @@ WellNest/
 │   │   └── styles/
 │   ├── public/
 │   └── package.json
+├── docs/
+│   ├──(icon svgs)
 └── README.md
 ```
 
