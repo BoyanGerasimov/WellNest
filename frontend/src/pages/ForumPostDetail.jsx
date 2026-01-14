@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { forumService } from '../services/forumService';
 import { useAuth } from '../context/AuthContext';
+import { HeartIcon } from '../components/icons/Icons';
 
 const ForumPostDetail = () => {
   const { id } = useParams();
