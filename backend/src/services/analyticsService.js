@@ -11,6 +11,20 @@ try {
   throw error;
 }
 
+// Initialize OpenAI client (optional) for tailored advice
+let openai = null;
+if (process.env.OPENAI_API_KEY) {
+  try {
+    const OpenAI = require('openai');
+    openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    console.log('✅ OpenAI initialized for analytics advice');
+  } catch (error) {
+    console.warn('⚠️  OpenAI package not available, using rule-based analytics advice');
+  }
+} else {
+  console.warn('⚠️  OPENAI_API_KEY not set, using rule-based analytics advice');
+}
+
 class AnalyticsService {
   /**
    * Predict weight loss/gain trajectory
@@ -87,6 +101,17 @@ class AnalyticsService {
     // Calculate weekly weight change rate
     const weeklyWeightChange = (dailyDeficit * 7) / 7700;
 
+    // Tailored advice based on goal vs predicted difference
+    const advice = await this.getGoalBasedAdvice({
+      user,
+      targetDate,
+      daysUntilTarget,
+      predictedWeight,
+      dailyDeficit,
+      tdee,
+      avgDailyCalories
+    });
+
     return {
       currentWeight: user.currentWeight,
       goalWeight: user.goalWeight,
@@ -99,8 +124,123 @@ class AnalyticsService {
       bmr: Math.round(bmr),
       tdee: Math.round(tdee),
       avgDailyCalories: Math.round(avgDailyCalories),
-      weightDifference: Math.round((predictedWeight - user.goalWeight) * 10) / 10
+      weightDifference: Math.round((predictedWeight - user.goalWeight) * 10) / 10,
+      advice
     };
+  }
+
+  /**
+   * Generate goal-based advice driven by the gap between predicted and goal weight.
+   * Uses AI if available, otherwise falls back to a deterministic recommendation.
+   * @private
+   */
+  async getGoalBasedAdvice({ user, targetDate, daysUntilTarget, predictedWeight, dailyDeficit, tdee, avgDailyCalories }) {
+    const goalGapKg = predictedWeight - user.goalWeight; // + => predicted heavier than goal, - => predicted lighter than goal
+    const roundedGapKg = Math.round(goalGapKg * 10) / 10;
+
+    // If already very close, keep guidance lightweight
+    if (Math.abs(goalGapKg) < 0.5) {
+      return {
+        type: 'maintain',
+        message: 'You’re very close to your goal based on the current trend. Keep your routine consistent and monitor weekly.',
+        suggestedDailyCalories: Math.round(avgDailyCalories),
+        calorieDelta: 0,
+        goalGapKg: roundedGapKg
+      };
+    }
+
+    // Required daily deficit (positive) or surplus (negative) to hit goal by target date
+    // dailyDeficitGoal = (current - goal) * 7700 / days
+    const dailyDeficitGoal = ((user.currentWeight - user.goalWeight) * 7700) / Math.max(1, daysUntilTarget);
+    const deltaDeficit = dailyDeficitGoal - dailyDeficit; // + => need MORE deficit; - => need LESS deficit / surplus
+
+    // Intake-only mapping: deficit = tdee - intake -> intakeTarget = tdee - dailyDeficitGoal
+    const suggestedDailyCalories = tdee - dailyDeficitGoal;
+    const calorieDelta = Math.round(suggestedDailyCalories - avgDailyCalories); // + eat more, - eat less
+
+    // Guardrails: keep numbers sane for display (we still message as "approx")
+    const clampedSuggestedCalories = Math.round(Math.max(1200, Math.min(4500, suggestedDailyCalories)));
+
+    const fallback = () => {
+      const direction = goalGapKg > 0 ? 'cut' : 'bulk';
+      const absGap = Math.abs(roundedGapKg);
+      const delta = Math.round(Math.abs(calorieDelta));
+
+      const message =
+        direction === 'cut'
+          ? `You’re projected to be about ${absGap} kg above your goal by ${targetDate}. To close the gap, aim for ~${clampedSuggestedCalories} kcal/day (about ${delta} kcal/day less than your recent average) and keep activity consistent.`
+          : `You’re projected to be about ${absGap} kg below your goal by ${targetDate}. To reach it, aim for ~${clampedSuggestedCalories} kcal/day (about ${delta} kcal/day more than your recent average) and prioritize strength training and recovery.`;
+
+      return {
+        type: direction,
+        message,
+        suggestedDailyCalories: clampedSuggestedCalories,
+        calorieDelta,
+        goalGapKg: roundedGapKg
+      };
+    };
+
+    if (!openai) {
+      return fallback();
+    }
+
+    try {
+      const prompt = `You are a fitness & nutrition coach. Create ONE short, specific recommendation tailored to the user's goal gap.
+
+Numbers (all approximations):
+- Current weight (kg): ${user.currentWeight}
+- Goal weight (kg): ${user.goalWeight}
+- Predicted weight at target date (kg): ${Math.round(predictedWeight * 10) / 10}
+- Target date: ${targetDate}
+- Days remaining: ${daysUntilTarget}
+- Estimated TDEE (kcal/day): ${Math.round(tdee)}
+- Recent average intake (kcal/day): ${Math.round(avgDailyCalories)}
+- Suggested intake to hit goal by target date (kcal/day): ${clampedSuggestedCalories}
+- Needed adjustment vs recent average (kcal/day): ${calorieDelta} (positive = eat more, negative = eat less)
+
+Constraints:
+- Keep it actionable and safe (no extreme dieting). Mention that it's an estimate.
+- If user needs to gain weight (predicted < goal), focus on lean gain: modest surplus, strength training, protein, sleep.
+- If user needs to lose weight (predicted > goal), focus on sustainable deficit, protein/fiber, steps/conditioning.
+- 2-4 sentences max.
+
+Return ONLY valid JSON with keys: type (cut|bulk|maintain), message, suggestedDailyCalories, calorieDelta, goalGapKg.`;
+
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          { role: 'system', content: 'Return ONLY valid JSON. No markdown. No extra text.' },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.6,
+        max_tokens: 250
+      });
+
+      let content = completion.choices[0].message.content.trim();
+      if (content.startsWith('```')) {
+        content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      }
+
+      const parsed = JSON.parse(content);
+      if (!parsed || typeof parsed !== 'object' || !parsed.message) {
+        return fallback();
+      }
+
+      const type = ['cut', 'bulk', 'maintain'].includes(parsed.type) ? parsed.type : (goalGapKg > 0 ? 'cut' : 'bulk');
+
+      return {
+        type,
+        message: String(parsed.message).slice(0, 400),
+        suggestedDailyCalories: Number.isFinite(parsed.suggestedDailyCalories)
+          ? Math.round(parsed.suggestedDailyCalories)
+          : clampedSuggestedCalories,
+        calorieDelta: Number.isFinite(parsed.calorieDelta) ? Math.round(parsed.calorieDelta) : calorieDelta,
+        goalGapKg: Number.isFinite(parsed.goalGapKg) ? Math.round(parsed.goalGapKg * 10) / 10 : roundedGapKg
+      };
+    } catch (error) {
+      console.warn('⚠️  AI analytics advice failed, using rule-based fallback:', error.message);
+      return fallback();
+    }
   }
 
   /**

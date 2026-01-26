@@ -172,6 +172,26 @@ const Analytics = () => {
                   </p>
                 </div>
               )}
+
+              {prediction.advice?.message && (
+                <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
+                  <p className="text-sm text-slate-800">
+                    <strong>Personalized plan:</strong> {prediction.advice.message}
+                  </p>
+                  {Number.isFinite(prediction.advice.suggestedDailyCalories) && (
+                    <p className="mt-2 text-xs text-slate-600">
+                      Suggested intake: <span className="font-semibold">{prediction.advice.suggestedDailyCalories} kcal/day</span>
+                      {Number.isFinite(prediction.advice.calorieDelta) && (
+                        <>
+                          {' '}(
+                          {prediction.advice.calorieDelta > 0 ? '+' : ''}
+                          {prediction.advice.calorieDelta} kcal/day vs recent average)
+                        </>
+                      )}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}
