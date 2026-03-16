@@ -101,9 +101,11 @@ const Dashboard = () => {
   const totalCaloriesIntake = mealStats?.totalCalories || 0;
   const totalWorkouts = workoutStats?.totalWorkouts || 0;
   
-  // Calculate average net calories per day (last 30 days)
-  const daysWithData = Math.max(1, Math.min(30, mealStats?.totalMeals || 1));
-  const averageNetCaloriesPerDay = (totalCaloriesIntake - totalCaloriesBurned) / daysWithData;
+  // Calculate averages per day over the last 30 days
+  const DAYS_IN_RANGE = 30;
+  const averageCaloriesIntakePerDay = totalCaloriesIntake / DAYS_IN_RANGE;
+  const averageCaloriesBurnedPerDay = totalCaloriesBurned / DAYS_IN_RANGE;
+  const averageNetCaloriesPerDay = (totalCaloriesIntake - totalCaloriesBurned) / DAYS_IN_RANGE;
 
   return (
     <div className="space-y-6 sm:space-y-8 px-4 sm:px-0">
@@ -156,8 +158,10 @@ const Dashboard = () => {
               <HamburgerIcon className="w-6 h-6" />
             </div>
           </div>
-          <p className="text-2xl sm:text-3xl font-bold text-slate-900">{Math.round(totalCaloriesIntake).toLocaleString()}</p>
-          <p className="text-xs text-slate-500 mt-1">Last 30 days</p>
+          <p className="text-2xl sm:text-3xl font-bold text-slate-900">
+            {Math.round(averageCaloriesIntakePerDay).toLocaleString()}
+          </p>
+          <p className="text-xs text-slate-500 mt-1">Avg per day (30 days)</p>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
@@ -167,8 +171,10 @@ const Dashboard = () => {
               <FireIcon className="w-6 h-6" />
             </div>
           </div>
-          <p className="text-2xl sm:text-3xl font-bold text-slate-900">{Math.round(totalCaloriesBurned).toLocaleString()}</p>
-          <p className="text-xs text-slate-500 mt-1">Last 30 days</p>
+          <p className="text-2xl sm:text-3xl font-bold text-slate-900">
+            {Math.round(averageCaloriesBurnedPerDay).toLocaleString()}
+          </p>
+          <p className="text-xs text-slate-500 mt-1">Avg per day (30 days)</p>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
@@ -398,9 +404,7 @@ const Dashboard = () => {
               <div className="flex justify-between items-center">
                 <span className="text-sm text-slate-600">Avg Daily Calories</span>
                 <span className="text-sm font-semibold text-slate-900">
-                  {mealStats?.totalMeals > 0 
-                    ? Math.round(totalCaloriesIntake / Math.min(mealStats.totalMeals, 30))
-                    : 0}
+                  {Math.round(averageCaloriesIntakePerDay)}
                 </span>
               </div>
               {user?.dailyCalorieGoal && (
