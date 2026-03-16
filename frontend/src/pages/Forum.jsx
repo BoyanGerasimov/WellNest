@@ -26,10 +26,31 @@ const Forum = () => {
 
   const handleLike = async (postId) => {
     try {
+      // Optimistic UI update: toggle like state locally
+      setPosts((prevPosts) =>
+        prevPosts.map((post) => {
+          if (post.id !== postId) return post;
+
+          const isLiked = !post.isLiked;
+          const currentLikes = post._count?.likes || 0;
+          const nextLikes = isLiked ? currentLikes + 1 : Math.max(0, currentLikes - 1);
+
+          return {
+            ...post,
+            isLiked,
+            _count: {
+              ...(post._count || {}),
+              likes: nextLikes,
+            },
+          };
+        })
+      );
+
       await forumService.toggleLike(postId);
-      loadPosts(); // Reload to update like status
     } catch (error) {
       console.error('Failed to toggle like:', error);
+      // On error, ideally revert optimistic update by reloading posts
+      loadPosts();
     }
   };
 

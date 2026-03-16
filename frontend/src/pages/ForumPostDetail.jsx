@@ -31,10 +31,29 @@ const ForumPostDetail = () => {
 
   const handleLike = async () => {
     try {
+      // Optimistic UI update for like status and count
+      setPost((prev) => {
+        if (!prev) return prev;
+
+        const isLiked = !prev.isLiked;
+        const currentLikes = prev._count?.likes || 0;
+        const nextLikes = isLiked ? currentLikes + 1 : Math.max(0, currentLikes - 1);
+
+        return {
+          ...prev,
+          isLiked,
+          _count: {
+            ...(prev._count || {}),
+            likes: nextLikes,
+          },
+        };
+      });
+
       await forumService.toggleLike(id);
-      loadPost(); // Reload to update like status
     } catch (error) {
       console.error('Failed to toggle like:', error);
+      // On error, reload from server to restore correct state
+      loadPost();
     }
   };
 
