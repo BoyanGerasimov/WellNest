@@ -70,36 +70,58 @@ async function seedTestAccount() {
   try {
     console.log('🌱 Starting test account seeding...\n');
 
-    // 1. Create or find test user
+    // 1. Create or refresh test user
     let user = await prisma.user.findUnique({
       where: { email: TEST_EMAIL }
     });
 
     if (user) {
-      console.log('✅ Test user already exists, skipping seed (to avoid duplicate data)');
-      console.log('   If you want to reseed, delete the user first or modify this script');
-      return;
-    }
+      console.log('♻️  Test user already exists, refreshing demo data...');
 
-    console.log('📝 Creating new test user...');
-      
-    const hashedPassword = await bcrypt.hash(TEST_PASSWORD, 10);
-    user = await prisma.user.create({
-      data: {
-        name: 'Test User',
-        email: TEST_EMAIL,
-        password: hashedPassword,
-        dateOfBirth: new Date('1995-05-15'),
-        gender: 'male',
-        height: 175,
-        currentWeight: 75,
-        goalWeight: 70,
-        activityLevel: 'moderately_active',
-        dailyCalorieGoal: 2200,
-        isEmailVerified: true
-      }
-    });
-    console.log(`✅ User created/updated: ${user.email}\n`);
+      // Clear existing demo data for this user so we can reseed
+      await prisma.workout.deleteMany({ where: { userId: user.id } });
+      await prisma.meal.deleteMany({ where: { userId: user.id } });
+      await prisma.achievement.deleteMany({ where: { userId: user.id } });
+      await prisma.forumPost.deleteMany({ where: { userId: user.id } });
+      await prisma.chatMessage.deleteMany({ where: { userId: user.id } });
+
+      // Optionally refresh profile fields so they always match the script
+      user = await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          name: 'Test User',
+          dateOfBirth: new Date('1995-05-15'),
+          gender: 'male',
+          height: 175,
+          currentWeight: 75,
+          goalWeight: 70,
+          activityLevel: 'moderately_active',
+          dailyCalorieGoal: 2200,
+          isEmailVerified: true
+        }
+      });
+      console.log(`✅ Test user found and cleaned: ${user.email}\n`);
+    } else {
+      console.log('📝 Creating new test user...');
+
+      const hashedPassword = await bcrypt.hash(TEST_PASSWORD, 10);
+      user = await prisma.user.create({
+        data: {
+          name: 'Test User',
+          email: TEST_EMAIL,
+          password: hashedPassword,
+          dateOfBirth: new Date('1995-05-15'),
+          gender: 'male',
+          height: 175,
+          currentWeight: 75,
+          goalWeight: 70,
+          activityLevel: 'moderately_active',
+          dailyCalorieGoal: 2200,
+          isEmailVerified: true
+        }
+      });
+      console.log(`✅ Test user created: ${user.email}\n`);
+    }
 
     // 2. Create workouts (past 30 days)
     console.log('💪 Creating workouts...');
